@@ -9,7 +9,17 @@ const AUTH_ROUTES = ["/login", "/register", "/admin-login"];
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
 
-  if (!isSupabaseConfigured) return response;
+  if (!isSupabaseConfigured) {
+    // Without credentials nobody can be authenticated, so the staff area is
+    // closed rather than left open on a misconfigured deployment.
+    const { pathname: unconfiguredPath } = request.nextUrl;
+    if (unconfiguredPath === "/admin" || unconfiguredPath.startsWith("/admin/")) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/admin-login";
+      return NextResponse.redirect(url);
+    }
+    return response;
+  }
 
   const supabase = createServerClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     cookies: {

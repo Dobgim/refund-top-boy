@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { DashboardShell, type NavItem } from "@/components/dashboard/shell";
-import { DemoBanner } from "@/components/dashboard/common";
+import { AdminNotConfigured } from "@/components/admin/not-configured";
 import { getCurrentProfile } from "@/lib/supabase/server";
 import { getAdminAccess } from "@/lib/supabase/authz";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
@@ -21,14 +21,18 @@ const NAV: NavItem[] = [
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const demo = !isSupabaseConfigured;
+  // No database means no reviewer can be identified, so the console closes
+  // rather than falling back to example records. Missing configuration must
+  // never be a way past the authorisation check.
+  if (!isSupabaseConfigured) return <AdminNotConfigured />;
+
   const [profile, access] = await Promise.all([getCurrentProfile(), getAdminAccess()]);
 
   // Authorisation is decided here, on the server, from the database role — and
-  // enforced a second time by row level security on every query.
-  // Gate on the same predicate the actions and RLS use, so the sidebar can
-  // never say ADMIN while every reviewer action is refused.
-  if (!demo && !access.isAdmin) {
+  // enforced a second time by row level security on every query. Gating on the
+  // same predicate the actions and RLS use means the sidebar can never say
+  // ADMIN while every reviewer action is refused.
+  if (!access.isAdmin) {
     redirect(access.userId ? "/dashboard" : "/admin-login");
   }
 
@@ -39,15 +43,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       name={profile?.full_name ?? "Case Administrator"}
       email={profile?.email ?? "admin@royalrefund.com"}
       role={access.role ?? profile?.role ?? "user"}
-      banner={
-        demo ? (
-          <DemoBanner>
-            <strong className="font-bold">Preview mode.</strong> The database is not connected on this
-            deployment, so the admin area is showing example records and role checks cannot be enforced.
-            Connect a project to see authorisation take effect.
-          </DemoBanner>
-        ) : null
-      }
     >
       {children}
     </DashboardShell>
