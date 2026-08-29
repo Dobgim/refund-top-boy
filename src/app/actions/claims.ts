@@ -8,6 +8,7 @@ import {
   settlementSchema,
 } from "@/lib/validations/claim";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { getAdminAccess } from "@/lib/supabase/authz";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { CLAIM_STATUSES } from "@/lib/claims";
 import type { ClaimStatus } from "@/types";
@@ -125,39 +126,26 @@ export async function updateClaimStatus(claimId: string, status: string, note: s
     return { ok: false, message: "Unknown status." };
   }
 
-  const supabase = await getSupabaseServerClient();
-  if (!supabase) return { ok: false, message: "Status changes are unavailable in this preview." };
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { ok: false, message: "Your session expired. Please sign in again." };
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .maybeSingle<{ role: "user" | "admin" }>();
-
-  if (profile?.role !== "admin") {
-    return { ok: false, message: "You do not have permission to change a case status." };
-  }
+  const { supabase, userId, isAdmin, reason } = await getAdminAccess();
+  if (!supabase || !userId) return { ok: false, message: reason ?? "Unavailable." };
+  if (!isAdmin) return { ok: false, message: reason ?? "You are not a reviewer on this project." };
 
   const { error } = await supabase
     .from("claims")
     .update({ status, last_update: new Date().toISOString() })
     .eq("id", claimId);
 
-  if (error) return { ok: false, message: "The status could not be updated." };
+  // Surface what Postgres actually said, rather than a generic failure.
+  if (error) return { ok: false, message: `The status could not be updated: ${error.message}` };
 
   // Every change writes a history row, with or without a note. A database
   // trigger turns that row into a notification for the case owner.
   await supabase
     .from("claim_status_history")
-    .insert({ claim_id: claimId, status, note: note.trim() || null, created_by: user.id });
+    .insert({ claim_id: claimId, status, note: note.trim() || null, created_by: userId });
 
   await supabase.from("admin_activity").insert({
-    admin_id: user.id,
+    admin_id: userId,
     action: "claim.status_changed",
     target_type: "claim",
     target_id: claimId,
@@ -170,26 +158,12 @@ export async function updateClaimStatus(claimId: string, status: string, note: s
   return { ok: true };
 }
 
-/** Re-reads the caller's role from the database. Never trust the client. */
+/** Thin adapter so the existing call sites keep their shape. */
 async function requireAdmin() {
-  const supabase = await getSupabaseServerClient();
-  if (!supabase) return { supabase: null, user: null, error: "Unavailable in preview mode." };
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { supabase, user: null, error: "Your session expired. Please sign in again." };
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .maybeSingle<{ role: "user" | "admin" }>();
-
-  if (profile?.role !== "admin") {
-    return { supabase, user, error: "You do not have permission to do that." };
-  }
-  return { supabase, user, error: null };
+  const { supabase, userId, isAdmin, reason } = await getAdminAccess();
+  if (!supabase || !userId) return { supabase: null, user: null, error: reason ?? "Unavailable." };
+  if (!isAdmin) return { supabase, user: null, error: reason ?? "You are not a reviewer." };
+  return { supabase, user: { id: userId }, error: null };
 }
 
 /** Admin-only correction of the case record itself. */
@@ -219,7 +193,9 @@ export async function updateClaimDetails(claimId: string, raw: unknown) {
     })
     .eq("id", claimId);
 
-  if (updateError) return { ok: false, message: "The case could not be updated." };
+  if (updateError) {
+    return { ok: false, message: `The case could not be updated: ${updateError.message}` };
+  }
 
   await supabase.from("admin_activity").insert({
     admin_id: user.id,
@@ -310,7 +286,10 @@ export async function recordSettlement(claimId: string, raw: unknown) {
     .eq("id", claimId);
 
   if (updateError) {
-    return { ok: false, message: "The settlement could not be saved. Has migration 05 been run?" };
+    return {
+      ok: false,
+      message: `The payout could not be saved: ${updateError.message}. If this mentions a missing column, run supabase/05_settlements.sql.`,
+    };
   }
 
   await supabase.from("admin_activity").insert({

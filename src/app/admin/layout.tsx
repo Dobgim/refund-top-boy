@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { DashboardShell, type NavItem } from "@/components/dashboard/shell";
 import { DemoBanner } from "@/components/dashboard/common";
 import { getCurrentProfile } from "@/lib/supabase/server";
+import { getAdminAccess } from "@/lib/supabase/authz";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 export const metadata: Metadata = {
@@ -21,12 +22,14 @@ const NAV: NavItem[] = [
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const demo = !isSupabaseConfigured;
-  const profile = await getCurrentProfile();
+  const [profile, access] = await Promise.all([getCurrentProfile(), getAdminAccess()]);
 
   // Authorisation is decided here, on the server, from the database role — and
   // enforced a second time by row level security on every query.
-  if (!demo && profile?.role !== "admin") {
-    redirect(profile ? "/dashboard" : "/admin-login");
+  // Gate on the same predicate the actions and RLS use, so the sidebar can
+  // never say ADMIN while every reviewer action is refused.
+  if (!demo && !access.isAdmin) {
+    redirect(access.userId ? "/dashboard" : "/admin-login");
   }
 
   return (
@@ -35,7 +38,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       areaLabel="Administration"
       name={profile?.full_name ?? "Case Administrator"}
       email={profile?.email ?? "admin@royalrefund.com"}
-      role={profile?.role ?? "admin"}
+      role={access.role ?? profile?.role ?? "user"}
       banner={
         demo ? (
           <DemoBanner>
