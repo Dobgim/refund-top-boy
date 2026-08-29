@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Hero } from "@/components/home/hero";
+import { PartnersSection } from "@/components/home/partners";
 import { ServicesSection } from "@/components/home/services";
 import { RecoveryControlSection } from "@/components/home/recovery-control";
 import { HowItWorksSection } from "@/components/home/how-it-works";
@@ -48,6 +49,7 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Hero />
+      <PartnersSection />
       <ServicesSection />
       <RecoveryControlSection />
       <HowItWorksSection />
