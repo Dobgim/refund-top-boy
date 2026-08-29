@@ -12,6 +12,7 @@ import {
 import { SITE } from "@/lib/site";
 import { formatBytes } from "@/lib/utils";
 import { getAdminAccess } from "@/lib/supabase/authz";
+import { ChangePasswordForm } from "@/components/forms/change-password-form";
 
 function Row({
   icon: Icon,
@@ -104,6 +105,17 @@ export default async function AdminSettingsPage() {
             This account can change case statuses, amend cases and record payouts.
           </Alert>
         )}
+      </Card>
+
+      <Card className="p-5 sm:p-6">
+        <h2 className="flex items-center gap-2 font-display text-lg font-bold tracking-tight text-ink-950">
+          <KeyRound aria-hidden className="size-4.5 text-ink-400" />
+          Change your password
+        </h2>
+        <p className="mt-1 mb-5 text-sm text-ink-500">
+          You will be asked for your current password first.
+        </p>
+        <ChangePasswordForm email={access.email ?? ""} />
       </Card>
 
       <div className="grid gap-5 lg:grid-cols-2">

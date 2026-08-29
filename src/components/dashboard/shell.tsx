@@ -17,6 +17,7 @@ import {
   Radar,
   ReceiptText,
   Bell,
+  BadgeCheck,
   Settings,
   ShieldCheck,
   Users,
@@ -43,6 +44,7 @@ export const NAV_ICONS = {
   documents: FileStack,
   messages: MessagesSquare,
   bell: Bell,
+  verify: BadgeCheck,
   settings: Settings,
 } satisfies Record<string, LucideIcon>;
 

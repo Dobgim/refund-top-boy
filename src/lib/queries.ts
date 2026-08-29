@@ -443,6 +443,7 @@ export async function getAdminUsers(): Promise<DataResult<Profile[]>> {
       country: ["United States", "Ghana", "Spain", "United Kingdom", "Germany"][index] ?? null,
       role: index === 0 ? "admin" : "user",
       account_status: index === 4 ? "pending" : "active",
+      verification_status: index === 4 ? "pending" : "verified",
       avatar_url: null,
       created_at: new Date(now.getTime() - index * 86_400_000 * 9).toISOString(),
       updated_at: now.toISOString(),
@@ -585,4 +586,57 @@ export async function getUnreadNotificationCount(): Promise<number> {
     .eq("read", false);
 
   return count ?? 0;
+}
+
+/* --------------------------------------------------- identity verification */
+
+export interface VerificationRow {
+  id: string;
+  user_id: string;
+  document_type: string;
+  full_name: string;
+  document_number: string | null;
+  front_path: string;
+  back_path: string | null;
+  status: "unverified" | "pending" | "verified" | "rejected";
+  rejection_reason: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+  owner?: { full_name: string; email: string; country: string | null } | null;
+}
+
+/** The signed-in user's own verification record, if they have submitted one. */
+export async function getMyVerification(): Promise<VerificationRow | null> {
+  const supabase = await getSupabaseServerClient();
+  if (!supabase) return null;
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const { data } = await supabase
+    .from("identity_verifications")
+    .select("*")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  return (data as VerificationRow | null) ?? null;
+}
+
+/** Every submitted document, newest first. Reviewer only, enforced by RLS. */
+export async function getAllVerifications(): Promise<DataResult<VerificationRow[]>> {
+  const supabase = await getSupabaseServerClient();
+  if (!supabase) return { data: [], demo: true };
+
+  const { data } = await supabase
+    .from("identity_verifications")
+    .select("*, profiles ( full_name, email, country )")
+    .order("created_at", { ascending: false })
+    .limit(200);
+
+  const rows = ((data as unknown as Array<VerificationRow & { profiles: VerificationRow["owner"] }>) ?? [])
+    .map((row) => ({ ...row, owner: row.profiles ?? null }));
+
+  return { data: rows, demo: false };
 }

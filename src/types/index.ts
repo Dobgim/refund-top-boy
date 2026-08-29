@@ -20,6 +20,7 @@ export type ClaimType =
 
 export type UserRole = "user" | "admin";
 export type AccountStatus = "active" | "pending" | "suspended";
+export type ProfileVerificationStatus = "unverified" | "pending" | "verified" | "rejected";
 
 export interface Profile {
   id: string;
@@ -28,6 +29,7 @@ export interface Profile {
   country: string | null;
   role: UserRole;
   account_status: AccountStatus;
+  verification_status: ProfileVerificationStatus;
   avatar_url: string | null;
   created_at: string;
   updated_at: string;

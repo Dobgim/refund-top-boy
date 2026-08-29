@@ -49,6 +49,23 @@ export async function createClaim(raw: unknown): Promise<CreateClaimResult> {
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, message: "Your session expired. Please sign in again." };
 
+  // Identity gate. Also enforced by a trigger on `claims`, so a request that
+  // skips the UI entirely still cannot file a claim on an unverified account.
+  const { data: gate } = await supabase
+    .from("profiles")
+    .select("verification_status")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const verification = (gate as { verification_status?: string } | null)?.verification_status;
+  if (verification !== "verified") {
+    return {
+      ok: false,
+      message:
+        "Your identity has not been verified yet. Upload an identity document before submitting a claim.",
+    };
+  }
+
   const values = parsed.data;
 
   const { data, error } = await supabase

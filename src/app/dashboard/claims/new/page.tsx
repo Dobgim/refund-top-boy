@@ -4,6 +4,8 @@ import { ArrowLeft } from "lucide-react";
 import { ClaimForm } from "@/components/forms/claim-form";
 import { PageHeader } from "@/components/dashboard/common";
 import { getCurrentProfile } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 export const metadata: Metadata = {
   title: "Start a claim",
@@ -12,6 +14,12 @@ export const metadata: Metadata = {
 
 export default async function NewClaimPage() {
   const profile = await getCurrentProfile();
+
+  // Identity gate: an unverified account is sent to verification rather than
+  // shown a form whose submission the database would reject anyway.
+  if (isSupabaseConfigured && profile?.verification_status !== "verified") {
+    redirect("/dashboard/verify");
+  }
 
   return (
     <div className="mx-auto max-w-3xl space-y-7">
