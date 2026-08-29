@@ -12,6 +12,7 @@ import {
 import { ButtonLink } from "@/components/ui/button";
 import { Card, EmptyState, StatusBadge } from "@/components/ui/primitives";
 import { PageHeader, StatCard, StageTracker } from "@/components/dashboard/common";
+import { PayoutWallet } from "@/components/dashboard/payout-wallet";
 import { getMyClaims } from "@/lib/queries";
 import { getCurrentProfile } from "@/lib/supabase/server";
 import { CLAIM_TYPE_LABELS } from "@/lib/claims";
@@ -25,9 +26,10 @@ export default async function DashboardOverviewPage() {
   );
   const completed = claims.filter((claim) => ["resolved", "closed"].includes(claim.status));
   const pending = claims.filter((claim) => claim.status === "documents_required");
-  const recovered = completed
-    .filter((claim) => claim.status === "resolved")
-    .reduce((sum, claim) => sum + claim.amount, 0);
+  // Only money actually recorded as paid out counts as recovered.
+  const settled = claims.filter((claim) => claim.settled_at && claim.settlement_amount);
+  const recovered = settled.reduce((sum, claim) => sum + (claim.settlement_amount ?? 0), 0);
+  const recoveredCurrency = settled[0]?.settlement_currency ?? settled[0]?.currency ?? "USD";
 
   const firstName = (profile?.full_name ?? "there").split(" ")[0];
 
@@ -72,12 +74,15 @@ export default async function DashboardOverviewPage() {
         <StatCard label="Completed" value={completed.length} icon={CheckCircle2} tone="mint" hint="Resolved or closed" />
         <StatCard
           label="Recovered"
-          value={formatCurrency(recovered, claims[0]?.currency ?? "USD")}
+          value={formatCurrency(recovered, recoveredCurrency)}
           icon={ClipboardList}
           tone="ink"
           hint="Across resolved cases"
         />
       </div>
+
+      {/* payouts */}
+      <PayoutWallet claims={claims} holder={profile?.full_name ?? "Your account"} />
 
       {/* active case detail */}
       <section className="grid gap-5 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">

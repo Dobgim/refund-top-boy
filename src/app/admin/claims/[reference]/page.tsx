@@ -10,6 +10,7 @@ import {
   MessageThread,
 } from "@/components/dashboard/claim-interactions";
 import { StatusUpdater } from "@/components/admin/status-updater";
+import { DecisionBar } from "@/components/admin/decision-bar";
 import { ClaimEditor } from "@/components/admin/claim-editor";
 import { SettlementForm } from "@/components/admin/settlement-form";
 import { getMyClaim } from "@/lib/queries";
@@ -105,17 +106,35 @@ export default async function AdminClaimDetailPage({ params }: { params: Params 
             <MessageComposer claimId={claim.id} disabled={demo} />
           </Card>
 
-          <Card className="p-5 sm:p-6">
-            <h2 className="font-display text-lg font-bold tracking-tight text-ink-950">
-              Submitted documents
-            </h2>
-            <DocumentList documents={claim.documents} demo={demo} />
-          </Card>
         </div>
 
         <div className="space-y-5">
           <Card className="p-5 sm:p-6">
-            <h2 className="font-display text-lg font-bold tracking-tight text-ink-950">Update status</h2>
+            <h2 className="font-display text-lg font-bold tracking-tight text-ink-950">Decision</h2>
+            <div className="mt-4">
+              <DecisionBar claimId={claim.id} current={claim.status} disabled={demo} />
+            </div>
+          </Card>
+
+          <Card className="p-5 sm:p-6">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="font-display text-lg font-bold tracking-tight text-ink-950">
+                Proof of transfer
+              </h2>
+              <span className="rounded-full bg-ink-100 px-2.5 py-1 text-xs font-bold text-ink-600">
+                {claim.documents.length} {claim.documents.length === 1 ? "file" : "files"}
+              </span>
+            </div>
+            <p className="mt-1 text-sm text-ink-500">
+              Evidence the customer uploaded for {formatCurrency(claim.amount, claim.currency)}.
+            </p>
+            <DocumentList documents={claim.documents} demo={demo} />
+          </Card>
+
+          <Card className="p-5 sm:p-6">
+            <h2 className="font-display text-lg font-bold tracking-tight text-ink-950">
+              Status with a custom note
+            </h2>
             <div className="mt-4">
               <StatusUpdater claimId={claim.id} current={claim.status} disabled={demo} />
             </div>

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { Info, TriangleAlert } from "lucide-react";
+import { Info, Paperclip, TriangleAlert } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { CLAIM_STAGES, CLAIM_STATUS_META, CLAIM_TYPE_LABELS, stageIndexFor } from "@/lib/claims";
 import { formatDate, formatDateTime, formatCurrency, cn } from "@/lib/utils";
@@ -215,6 +215,7 @@ export function ClaimsList({
                 <th scope="col" className="px-5 py-3.5 font-bold">Type</th>
                 <th scope="col" className="px-5 py-3.5 font-bold">Submitted</th>
                 <th scope="col" className="px-5 py-3.5 text-right font-bold">Amount</th>
+                {showOwner && <th scope="col" className="px-5 py-3.5 font-bold">Proof</th>}
                 <th scope="col" className="px-5 py-3.5 font-bold">Status</th>
                 <th scope="col" className="px-5 py-3.5 font-bold">Last update</th>
               </tr>
@@ -248,6 +249,21 @@ export function ClaimsList({
                   <td className="px-5 py-4 text-right font-mono font-bold whitespace-nowrap text-ink-950">
                     {formatCurrency(claim.amount, claim.currency)}
                   </td>
+                  {showOwner && (
+                    <td className="px-5 py-4 whitespace-nowrap">
+                      <span
+                        className={cn(
+                          "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold",
+                          claim.document_count
+                            ? "bg-mint-500/10 text-mint-700"
+                            : "bg-amber-50 text-amber-700",
+                        )}
+                      >
+                        <Paperclip aria-hidden className="size-3.5" />
+                        {claim.document_count ?? 0}
+                      </span>
+                    </td>
+                  )}
                   <td className="px-5 py-4">
                     <StatusBadge status={claim.status} />
                   </td>

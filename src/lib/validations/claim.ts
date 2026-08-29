@@ -105,13 +105,26 @@ export type AdminClaimEditValues = z.infer<typeof adminClaimEditSchema>;
  * Recording money returned to the customer. `approvedAmount` is capped against
  * the claimed amount by a database constraint as well as here.
  */
-export const settlementSchema = z.object({
-  approvedAmount: z
-    .number({ message: "Enter the amount being returned" })
-    .nonnegative("Amount cannot be negative"),
-  method: z.enum(SETTLEMENT_METHODS),
-  reference: z.string().trim().max(120).optional().or(z.literal("")),
-  note: z.string().trim().max(1000).optional().or(z.literal("")),
-});
+export const settlementSchema = z
+  .object({
+    approvedAmount: z
+      .number({ message: "Enter the amount being returned" })
+      .nonnegative("Amount cannot be negative"),
+    /** Currency actually paid out. Crypto claims settle in USDT. */
+    payoutCurrency: z.enum(CURRENCIES),
+    /** Units of payoutCurrency per 1 unit of the claim currency. */
+    conversionRate: z
+      .number()
+      .positive("Enter the rate used")
+      .optional()
+      .or(z.literal(0).transform(() => undefined)),
+    method: z.enum(SETTLEMENT_METHODS),
+    reference: z.string().trim().max(120).optional().or(z.literal("")),
+    note: z.string().trim().max(1000).optional().or(z.literal("")),
+  })
+  .refine(
+    (v) => !v.conversionRate || v.conversionRate > 0,
+    { path: ["conversionRate"], message: "The rate must be greater than zero" },
+  );
 
 export type SettlementValues = z.infer<typeof settlementSchema>;

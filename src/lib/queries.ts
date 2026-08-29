@@ -27,6 +27,11 @@ export interface ClaimSummary {
   last_update: string;
   reason: string;
   owner?: { full_name: string; email: string } | null;
+  approved_amount?: number | null;
+  settlement_amount?: number | null;
+  settlement_currency?: string | null;
+  settled_at?: string | null;
+  document_count?: number;
 }
 
 export interface ClaimDetail extends ClaimSummary {
@@ -43,6 +48,9 @@ export interface ClaimDetail extends ClaimSummary {
   settlement_reference: string | null;
   settlement_note: string | null;
   settled_at: string | null;
+  settlement_currency: string | null;
+  settlement_amount: number | null;
+  settlement_rate: number | null;
   timeline: Array<Pick<ClaimStatusEvent, "id" | "status" | "note" | "created_at">>;
   documents: Array<Pick<ClaimDocument, "id" | "file_name" | "size_bytes" | "created_at" | "storage_path">>;
   messages: Array<Pick<ClaimMessage, "id" | "sender_role" | "body" | "created_at">>;
@@ -87,6 +95,9 @@ function demoToDetail(claim: DemoClaim): ClaimDetail {
     settlement_reference: null,
     settlement_note: null,
     settled_at: null,
+    settlement_currency: null,
+    settlement_amount: null,
+    settlement_rate: null,
     timeline: claim.timeline.map((entry, index) => ({
       id: `${claim.reference}-t${index}`,
       status: entry.status,
@@ -110,7 +121,27 @@ function demoToDetail(claim: DemoClaim): ClaimDetail {
 }
 
 const SUMMARY_COLUMNS =
-  "id, reference, claim_type, status, amount, currency, created_at, last_update, reason";
+  "id, reference, claim_type, status, amount, currency, created_at, last_update, reason, " +
+  "approved_amount, settlement_amount, settlement_currency, settled_at, " +
+  "claim_documents(count)";
+
+/** Flattens the embedded `claim_documents(count)` aggregate into a plain number. */
+function normaliseSummary(row: unknown): ClaimSummary {
+  const record = row as ClaimSummary & { claim_documents?: Array<{ count: number }> };
+  return {
+    ...record,
+    amount: Number(record.amount),
+    approved_amount:
+      record.approved_amount === null || record.approved_amount === undefined
+        ? null
+        : Number(record.approved_amount),
+    settlement_amount:
+      record.settlement_amount === null || record.settlement_amount === undefined
+        ? null
+        : Number(record.settlement_amount),
+    document_count: record.claim_documents?.[0]?.count ?? 0,
+  };
+}
 
 /* ---------------------------------------------------------------- user scope */
 
@@ -131,7 +162,7 @@ export async function getMyClaims(): Promise<DataResult<ClaimSummary[]>> {
     .order("created_at", { ascending: false });
 
   if (error || !data) return { data: [], demo: false };
-  return { data: data as unknown as ClaimSummary[], demo: false };
+  return { data: (data as unknown[]).map(normaliseSummary), demo: false };
 }
 
 export async function getMyClaim(reference: string): Promise<DataResult<ClaimDetail | null>> {
@@ -160,6 +191,9 @@ export async function getMyClaim(reference: string): Promise<DataResult<ClaimDet
     settlement_reference: string | null;
     settlement_note: string | null;
     settled_at: string | null;
+    settlement_currency: string | null;
+    settlement_amount: number | null;
+    settlement_rate: number | null;
     claim_status_history: ClaimStatusEvent[];
     claim_documents: ClaimDocument[];
     claim_messages: ClaimMessage[];
@@ -191,6 +225,15 @@ export async function getMyClaim(reference: string): Promise<DataResult<ClaimDet
       settlement_reference: row.settlement_reference ?? null,
       settlement_note: row.settlement_note ?? null,
       settled_at: row.settled_at ?? null,
+      settlement_currency: row.settlement_currency ?? null,
+      settlement_amount:
+        row.settlement_amount === null || row.settlement_amount === undefined
+          ? null
+          : Number(row.settlement_amount),
+      settlement_rate:
+        row.settlement_rate === null || row.settlement_rate === undefined
+          ? null
+          : Number(row.settlement_rate),
       timeline: (row.claim_status_history ?? []).sort(
         (a, b) => Date.parse(a.created_at) - Date.parse(b.created_at),
       ),
@@ -374,9 +417,11 @@ export async function getAdminClaims(options: {
 
   const { data } = await query.limit(100);
 
-  const rows = ((data as unknown as Array<ClaimSummary & { profiles: ClaimSummary["owner"] }>) ?? []).map(
-    (row) => ({ ...row, owner: row.profiles ?? null }),
-  );
+  const rows = ((data as unknown[]) ?? []).map((row) => {
+    const summary = normaliseSummary(row);
+    const owner = (row as { profiles?: ClaimSummary["owner"] }).profiles ?? null;
+    return { ...summary, owner };
+  });
 
   return { data: rows, demo: false };
 }

@@ -276,10 +276,31 @@ export async function recordSettlement(claimId: string, raw: unknown) {
     return { ok: false, message: "The approved amount cannot exceed the amount claimed." };
   }
 
+  // A crypto claim is paid out in USDT. Store the payout currency, the amount
+  // actually sent and the rate used, so the customer can check the arithmetic
+  // instead of being handed a converted number to take on trust.
+  const payoutCurrency = v.payoutCurrency;
+  const converted = payoutCurrency !== claim.currency;
+  const rate = converted ? v.conversionRate : undefined;
+
+  if (converted && !rate) {
+    return {
+      ok: false,
+      message: `Enter the rate used to convert ${claim.currency} to ${payoutCurrency}.`,
+    };
+  }
+
+  const settlementAmount = converted
+    ? Number((v.approvedAmount * (rate as number)).toFixed(8))
+    : v.approvedAmount;
+
   const { error: updateError } = await supabase
     .from("claims")
     .update({
       approved_amount: v.approvedAmount,
+      settlement_currency: payoutCurrency,
+      settlement_amount: settlementAmount,
+      settlement_rate: rate ?? null,
       settlement_method: v.method,
       settlement_reference: v.reference || null,
       settlement_note: v.note || null,
@@ -297,13 +318,23 @@ export async function recordSettlement(claimId: string, raw: unknown) {
     action: "claim.settlement_recorded",
     target_type: "claim",
     target_id: claimId,
-    detail: { approved_amount: v.approvedAmount, method: v.method },
+    detail: {
+      approved_amount: v.approvedAmount,
+      settlement_amount: settlementAmount,
+      settlement_currency: payoutCurrency,
+      rate: rate ?? null,
+      method: v.method,
+    },
   });
+
+  const conversionLine = converted
+    ? ` Your ${claim.currency} claim was converted to ${payoutCurrency} at 1 ${claim.currency} = ${rate} ${payoutCurrency}.`
+    : "";
 
   await supabase.from("notifications").insert({
     user_id: claim.user_id,
-    title: `A payout was recorded for case ${claim.reference}`,
-    body: v.note || "Open the case to see the amount and how it is being returned.",
+    title: `${settlementAmount} ${payoutCurrency} approved for case ${claim.reference}`,
+    body: `${v.note || "The payout has been recorded against your case."}${conversionLine}`,
     claim_id: claimId,
   });
 
@@ -330,4 +361,36 @@ export async function markNotificationsRead(ids?: string[]) {
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/notifications");
   return { ok: true };
+}
+
+
+/**
+ * One-click decision from the review queue. A thin wrapper over
+ * updateClaimStatus with a default note, so the common actions do not require
+ * filling in a form.
+ */
+export async function decideClaim(
+  claimId: string,
+  decision: "approve" | "reject" | "review" | "request_documents",
+) {
+  const map = {
+    approve: {
+      status: "approved" as ClaimStatus,
+      note: "Case approved. The recovered amount will be recorded shortly.",
+    },
+    reject: {
+      status: "closed" as ClaimStatus,
+      note: "Case closed. It did not meet the criteria for recovery.",
+    },
+    review: {
+      status: "under_review" as ClaimStatus,
+      note: "A case handler is now assessing the evidence.",
+    },
+    request_documents: {
+      status: "documents_required" as ClaimStatus,
+      note: "Further documents are needed before the review can continue.",
+    },
+  }[decision];
+
+  return updateClaimStatus(claimId, map.status, map.note);
 }

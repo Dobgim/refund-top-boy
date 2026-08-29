@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { DashboardShell, type NavItem } from "@/components/dashboard/shell";
 import { DemoBanner } from "@/components/dashboard/common";
 import { getCurrentProfile } from "@/lib/supabase/server";
@@ -27,14 +28,15 @@ export default async function DashboardLayout({ children }: { children: React.Re
   ]);
   const demo = !isSupabaseConfigured;
 
+  // Reviewers do not file claims. Send them to their own area rather than
+  // showing them a customer portal with a "Start a Claim" button in it.
+  if (profile?.role === "admin") redirect("/admin");
+
   const withBadge: NavItem[] = NAV.map((item) =>
     item.href === "/dashboard/notifications" ? { ...item, badge: unread } : item,
   );
 
-  const nav: NavItem[] =
-    profile?.role === "admin"
-      ? [...withBadge, { label: "Admin", href: "/admin", icon: "admin" }]
-      : withBadge;
+  const nav: NavItem[] = withBadge;
 
   return (
     <DashboardShell
