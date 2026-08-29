@@ -3,6 +3,7 @@ import "server-only";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { DEMO_CLAIMS, findDemoClaim, type DemoClaim } from "@/lib/data/demo";
+import type { SettlementMethod } from "@/lib/claims";
 import type {
   Claim,
   ClaimDocument,
@@ -37,6 +38,11 @@ export interface ClaimDetail extends ClaimSummary {
   contact_name: string;
   contact_email: string;
   country: string | null;
+  approved_amount: number | null;
+  settlement_method: SettlementMethod | null;
+  settlement_reference: string | null;
+  settlement_note: string | null;
+  settled_at: string | null;
   timeline: Array<Pick<ClaimStatusEvent, "id" | "status" | "note" | "created_at">>;
   documents: Array<Pick<ClaimDocument, "id" | "file_name" | "size_bytes" | "created_at" | "storage_path">>;
   messages: Array<Pick<ClaimMessage, "id" | "sender_role" | "body" | "created_at">>;
@@ -76,6 +82,11 @@ function demoToDetail(claim: DemoClaim): ClaimDetail {
     contact_name: "Amara Osei",
     contact_email: "amara.osei@example.com",
     country: "United States",
+    approved_amount: null,
+    settlement_method: null,
+    settlement_reference: null,
+    settlement_note: null,
+    settled_at: null,
     timeline: claim.timeline.map((entry, index) => ({
       id: `${claim.reference}-t${index}`,
       status: entry.status,
@@ -144,6 +155,11 @@ export async function getMyClaim(reference: string): Promise<DataResult<ClaimDet
   if (error || !data) return { data: null, demo: false };
 
   const row = data as unknown as Claim & {
+    approved_amount: number | null;
+    settlement_method: SettlementMethod | null;
+    settlement_reference: string | null;
+    settlement_note: string | null;
+    settled_at: string | null;
     claim_status_history: ClaimStatusEvent[];
     claim_documents: ClaimDocument[];
     claim_messages: ClaimMessage[];
@@ -168,6 +184,13 @@ export async function getMyClaim(reference: string): Promise<DataResult<ClaimDet
       contact_name: row.contact_name,
       contact_email: row.contact_email,
       country: row.country,
+      approved_amount: row.approved_amount === null || row.approved_amount === undefined
+        ? null
+        : Number(row.approved_amount),
+      settlement_method: row.settlement_method ?? null,
+      settlement_reference: row.settlement_reference ?? null,
+      settlement_note: row.settlement_note ?? null,
+      settled_at: row.settled_at ?? null,
       timeline: (row.claim_status_history ?? []).sort(
         (a, b) => Date.parse(a.created_at) - Date.parse(b.created_at),
       ),
@@ -463,4 +486,58 @@ export async function getAdminMessages(): Promise<DataResult<AdminMessageRow[]>>
   );
 
   return { data: rows, demo: false };
+}
+
+
+/* ------------------------------------------------------------ notifications */
+
+export interface NotificationRow {
+  id: string;
+  title: string;
+  body: string | null;
+  read: boolean;
+  claim_id: string | null;
+  created_at: string;
+  reference?: string | null;
+}
+
+/** The signed-in user's notifications. RLS scopes this to their own rows. */
+export async function getMyNotifications(limit = 30): Promise<DataResult<NotificationRow[]>> {
+  const supabase = await getSupabaseServerClient();
+  if (!supabase) return { data: [], demo: true };
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { data: [], demo: false };
+
+  const { data } = await supabase
+    .from("notifications")
+    .select("id, title, body, read, claim_id, created_at, claims ( reference )")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  const rows = ((data as unknown as Array<NotificationRow & { claims: { reference: string } | null }>) ?? [])
+    .map((row) => ({ ...row, reference: row.claims?.reference ?? null }));
+
+  return { data: rows, demo: false };
+}
+
+export async function getUnreadNotificationCount(): Promise<number> {
+  const supabase = await getSupabaseServerClient();
+  if (!supabase) return 0;
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return 0;
+
+  const { count } = await supabase
+    .from("notifications")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id)
+    .eq("read", false);
+
+  return count ?? 0;
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DashboardShell, type NavItem } from "@/components/dashboard/shell";
 import { DemoBanner } from "@/components/dashboard/common";
 import { getCurrentProfile } from "@/lib/supabase/server";
+import { getUnreadNotificationCount } from "@/lib/queries";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 export const metadata: Metadata = {
@@ -13,19 +14,27 @@ export const metadata: Metadata = {
 const NAV: NavItem[] = [
   { label: "Overview", href: "/dashboard", icon: "dashboard", exact: true },
   { label: "My Claims", href: "/dashboard/claims", icon: "claims" },
+  { label: "Notifications", href: "/dashboard/notifications", icon: "bell" },
   { label: "Start a Claim", href: "/dashboard/claims/new", icon: "newClaim" },
   { label: "Track a Case", href: "/track", icon: "track" },
   { label: "Help Center", href: "/faq", icon: "help" },
 ];
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const profile = await getCurrentProfile();
+  const [profile, unread] = await Promise.all([
+    getCurrentProfile(),
+    getUnreadNotificationCount(),
+  ]);
   const demo = !isSupabaseConfigured;
+
+  const withBadge: NavItem[] = NAV.map((item) =>
+    item.href === "/dashboard/notifications" ? { ...item, badge: unread } : item,
+  );
 
   const nav: NavItem[] =
     profile?.role === "admin"
-      ? [...NAV, { label: "Admin", href: "/admin", icon: "admin" }]
-      : NAV;
+      ? [...withBadge, { label: "Admin", href: "/admin", icon: "admin" }]
+      : withBadge;
 
   return (
     <DashboardShell

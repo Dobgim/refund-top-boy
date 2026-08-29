@@ -1,7 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, CalendarDays, Hash, Landmark, MapPin, Tag, Wallet } from "lucide-react";
+import {
+  ArrowLeft,
+  BanknoteArrowDown,
+  CalendarDays,
+  Hash,
+  Landmark,
+  MapPin,
+  Tag,
+  Wallet,
+} from "lucide-react";
 import { Alert, Card, StatusBadge } from "@/components/ui/primitives";
 import { ClaimTimeline, PageHeader, StageTracker, StatusHint } from "@/components/dashboard/common";
 import {
@@ -10,7 +19,7 @@ import {
   MessageThread,
 } from "@/components/dashboard/claim-interactions";
 import { getMyClaim } from "@/lib/queries";
-import { CLAIM_TYPE_LABELS } from "@/lib/claims";
+import { CLAIM_TYPE_LABELS, SETTLEMENT_METHOD_LABELS } from "@/lib/claims";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 type Params = Promise<{ reference: string }>;
@@ -77,6 +86,40 @@ export default async function ClaimDetailPage({
         description={claim.reason}
         action={<StatusBadge status={claim.status} className="text-sm" />}
       />
+
+      {claim.settled_at && claim.approved_amount !== null && (
+        <Card className="border-mint-500/30 bg-mint-500/5 p-5 sm:p-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-start gap-3">
+              <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-mint-500/15 text-mint-600">
+                <BanknoteArrowDown aria-hidden className="size-5" />
+              </span>
+              <div>
+                <p className="font-bold text-ink-950">Payout recorded</p>
+                <p className="mt-0.5 text-sm text-ink-600">
+                  {formatCurrency(claim.approved_amount, claim.currency)} returned via{" "}
+                  {claim.settlement_method
+                    ? SETTLEMENT_METHOD_LABELS[claim.settlement_method].toLowerCase()
+                    : "the original payment method"}
+                  {" on "}
+                  {formatDate(claim.settled_at)}.
+                </p>
+                {claim.settlement_note && (
+                  <p className="mt-2 text-sm leading-relaxed text-ink-600">{claim.settlement_note}</p>
+                )}
+              </div>
+            </div>
+            {claim.settlement_reference && (
+              <div className="shrink-0 sm:text-right">
+                <p className="text-xs text-ink-400">Payout reference</p>
+                <p className="font-mono text-sm font-bold break-all text-ink-900">
+                  {claim.settlement_reference}
+                </p>
+              </div>
+            )}
+          </div>
+        </Card>
+      )}
 
       <Card className="p-5 sm:p-6">
         <StageTracker status={claim.status} />

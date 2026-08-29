@@ -26,7 +26,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   // Authorisation is decided here, on the server, from the database role — and
   // enforced a second time by row level security on every query.
   if (!demo && profile?.role !== "admin") {
-    redirect("/dashboard");
+    redirect(profile ? "/dashboard" : "/admin-login");
   }
 
   return (

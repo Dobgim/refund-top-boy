@@ -10,6 +10,8 @@ import {
   MessageThread,
 } from "@/components/dashboard/claim-interactions";
 import { StatusUpdater } from "@/components/admin/status-updater";
+import { ClaimEditor } from "@/components/admin/claim-editor";
+import { SettlementForm } from "@/components/admin/settlement-form";
 import { getMyClaim } from "@/lib/queries";
 import { CLAIM_TYPE_LABELS } from "@/lib/claims";
 import { formatCurrency, formatDate } from "@/lib/utils";
@@ -87,6 +89,16 @@ export default async function AdminClaimDetailPage({ params }: { params: Params 
 
           <Card className="p-5 sm:p-6">
             <h2 className="font-display text-lg font-bold tracking-tight text-ink-950">
+              Amend the case
+            </h2>
+            <p className="mt-1 mb-4 text-sm text-ink-500">
+              Correct anything the customer mistyped. Every change is logged and the customer is told.
+            </p>
+            <ClaimEditor claim={claim} disabled={demo} />
+          </Card>
+
+          <Card className="p-5 sm:p-6">
+            <h2 className="font-display text-lg font-bold tracking-tight text-ink-950">
               Customer communication
             </h2>
             <MessageThread messages={claim.messages} />
@@ -106,6 +118,18 @@ export default async function AdminClaimDetailPage({ params }: { params: Params 
             <h2 className="font-display text-lg font-bold tracking-tight text-ink-950">Update status</h2>
             <div className="mt-4">
               <StatusUpdater claimId={claim.id} current={claim.status} disabled={demo} />
+            </div>
+          </Card>
+
+          <Card className="p-5 sm:p-6">
+            <h2 className="font-display text-lg font-bold tracking-tight text-ink-950">
+              Record a payout
+            </h2>
+            <p className="mt-1 text-sm text-ink-500">
+              Available once a case is approved, and visible to the customer immediately.
+            </p>
+            <div className="mt-4">
+              <SettlementForm claim={claim} disabled={demo} />
             </div>
           </Card>
 

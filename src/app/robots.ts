@@ -8,7 +8,15 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: "*",
         allow: "/",
         // Private areas and single-use auth links must never be indexed.
-        disallow: ["/dashboard", "/admin", "/auth/", "/login", "/forgot-password", "/reset-password"],
+        disallow: [
+          "/dashboard",
+          "/admin",
+          "/admin-login",
+          "/auth/",
+          "/login",
+          "/forgot-password",
+          "/reset-password",
+        ],
       },
     ],
     sitemap: `${SITE.url}/sitemap.xml`,

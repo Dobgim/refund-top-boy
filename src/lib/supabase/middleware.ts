@@ -3,7 +3,7 @@ import { createServerClient } from "@supabase/ssr";
 import { SUPABASE_ANON_KEY, SUPABASE_URL, isSupabaseConfigured } from "./config";
 
 const PROTECTED_PREFIXES = ["/dashboard", "/admin"];
-const AUTH_ROUTES = ["/login", "/register"];
+const AUTH_ROUTES = ["/login", "/register", "/admin-login"];
 
 /** Refreshes the Supabase session cookie and gates protected routes. */
 export async function updateSession(request: NextRequest) {
@@ -39,8 +39,9 @@ export async function updateSession(request: NextRequest) {
 
   if (isProtected && !user) {
     const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    url.searchParams.set("next", pathname);
+    // Staff areas bounce to the staff page, which offers no registration.
+    url.pathname = pathname.startsWith("/admin") ? "/admin-login" : "/login";
+    if (!pathname.startsWith("/admin")) url.searchParams.set("next", pathname);
     return NextResponse.redirect(url);
   }
 

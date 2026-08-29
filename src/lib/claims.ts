@@ -139,3 +139,23 @@ export const ALLOWED_UPLOAD_TYPES = [
 ] as const;
 
 export const ALLOWED_UPLOAD_LABEL = "PDF, PNG, JPG, WEBP or CSV up to 8 MB";
+
+export const SETTLEMENT_METHODS = [
+  "bank_transfer",
+  "card_reversal",
+  "original_payment_method",
+  "crypto_transfer",
+  "store_credit",
+  "other",
+] as const;
+
+export type SettlementMethod = (typeof SETTLEMENT_METHODS)[number];
+
+export const SETTLEMENT_METHOD_LABELS: Record<SettlementMethod, string> = {
+  bank_transfer: "Bank transfer",
+  card_reversal: "Card reversal",
+  original_payment_method: "Original payment method",
+  crypto_transfer: "Crypto transfer",
+  store_credit: "Store credit",
+  other: "Other",
+};

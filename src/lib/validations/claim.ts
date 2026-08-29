@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { CLAIM_TYPES, CURRENCIES, MAX_UPLOAD_BYTES, ALLOWED_UPLOAD_TYPES } from "@/lib/claims";
+import {
+  CLAIM_TYPES,
+  CURRENCIES,
+  MAX_UPLOAD_BYTES,
+  ALLOWED_UPLOAD_TYPES,
+  SETTLEMENT_METHODS,
+} from "@/lib/claims";
 import type { ClaimType } from "@/types";
 
 export const claimSchema = z.object({
@@ -79,3 +85,33 @@ export function validateUploadFile(file: File): string | null {
   if (file.name.length > 150) return "File name is too long";
   return null;
 }
+
+/** Fields a reviewer may correct on an existing case. */
+export const adminClaimEditSchema = z.object({
+  claimType: z.enum(CLAIM_TYPES as [ClaimType, ...ClaimType[]]),
+  amount: z.number().positive("Amount must be greater than zero").max(10_000_000),
+  currency: z.enum(CURRENCIES),
+  transactionDate: z.string().optional().or(z.literal("")),
+  transactionType: z.string().trim().max(64).optional().or(z.literal("")),
+  transactionReference: z.string().trim().max(120).optional().or(z.literal("")),
+  reason: z.string().trim().min(4).max(140),
+  description: z.string().trim().min(40).max(4000),
+  supportingDetails: z.string().trim().max(2000).optional().or(z.literal("")),
+});
+
+export type AdminClaimEditValues = z.infer<typeof adminClaimEditSchema>;
+
+/**
+ * Recording money returned to the customer. `approvedAmount` is capped against
+ * the claimed amount by a database constraint as well as here.
+ */
+export const settlementSchema = z.object({
+  approvedAmount: z
+    .number({ message: "Enter the amount being returned" })
+    .nonnegative("Amount cannot be negative"),
+  method: z.enum(SETTLEMENT_METHODS),
+  reference: z.string().trim().max(120).optional().or(z.literal("")),
+  note: z.string().trim().max(1000).optional().or(z.literal("")),
+});
+
+export type SettlementValues = z.infer<typeof settlementSchema>;

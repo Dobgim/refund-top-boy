@@ -16,6 +16,7 @@ import {
   MessagesSquare,
   Radar,
   ReceiptText,
+  Bell,
   Settings,
   ShieldCheck,
   Users,
@@ -41,6 +42,7 @@ export const NAV_ICONS = {
   users: Users,
   documents: FileStack,
   messages: MessagesSquare,
+  bell: Bell,
   settings: Settings,
 } satisfies Record<string, LucideIcon>;
 
@@ -51,6 +53,8 @@ export interface NavItem {
   href: string;
   icon: NavIconName;
   exact?: boolean;
+  /** Rendered as a small count pill on the right of the item. */
+  badge?: number;
 }
 
 function NavList({ items, onNavigate }: { items: NavItem[]; onNavigate?: () => void }) {
@@ -75,7 +79,19 @@ function NavList({ items, onNavigate }: { items: NavItem[]; onNavigate?: () => v
             >
               <Icon aria-hidden className={cn("size-4.5 shrink-0", active ? "text-white" : "text-ink-400 group-hover:text-royal-600")} />
               <span className="flex-1 truncate">{item.label}</span>
-              {active && <ChevronRight aria-hidden className="size-4 opacity-70" />}
+              {item.badge ? (
+                <span
+                  className={cn(
+                    "grid min-w-5 shrink-0 place-items-center rounded-full px-1.5 text-[0.65rem] font-extrabold",
+                    active ? "bg-white/20 text-white" : "bg-royal-600 text-white",
+                  )}
+                >
+                  {item.badge > 99 ? "99+" : item.badge}
+                  <span className="sr-only"> unread</span>
+                </span>
+              ) : (
+                active && <ChevronRight aria-hidden className="size-4 opacity-70" />
+              )}
             </Link>
           </li>
         );
