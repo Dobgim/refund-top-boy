@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/field";
 import { Alert } from "@/components/ui/primitives";
 import { AuthHeading, PasswordInput, SupabaseNotice } from "@/components/forms/shared";
+import { Turnstile } from "@/components/forms/turnstile";
+import { isTurnstileEnabled } from "@/lib/turnstile";
 import { loginSchema, type LoginValues } from "@/lib/validations/auth";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
@@ -18,6 +20,7 @@ export function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
   const [formError, setFormError] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const notice = params.get("notice");
 
   const {
@@ -37,9 +40,15 @@ export function LoginForm() {
       return;
     }
 
+    if (isTurnstileEnabled && !captchaToken) {
+      setFormError("Please complete the security check below.");
+      return;
+    }
+
     const { error } = await supabase.auth.signInWithPassword({
       email: values.email,
       password: values.password,
+      ...(captchaToken ? { options: { captchaToken } } : {}),
     });
 
     if (error) {
@@ -112,6 +121,8 @@ export function LoginForm() {
             </Link>
           </div>
         </div>
+
+        <Turnstile onToken={setCaptchaToken} />
 
         <Button
           type="submit"

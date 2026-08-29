@@ -5,6 +5,7 @@ import { useFormStatus } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, CheckCircle2, Loader2, Mail, XCircle } from "lucide-react";
 import { subscribeToNewsletter } from "@/app/actions/newsletter";
+import { Turnstile } from "@/components/forms/turnstile";
 import { newsletterSchema } from "@/lib/validations/claim";
 import type { ActionState } from "@/types";
 import { cn } from "@/lib/utils";
@@ -43,6 +44,7 @@ export function NewsletterForm({
 }) {
   const [state, formAction] = useActionState(subscribeToNewsletter, INITIAL);
   const [clientError, setClientError] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
@@ -68,9 +70,10 @@ export function NewsletterForm({
           }
           setClientError(null);
         }}
-        className="flex flex-col gap-2 sm:flex-row"
+        className="space-y-3"
         noValidate
       >
+        <div className="flex flex-col gap-2 sm:flex-row">
         <div className="relative min-w-0 flex-1">
           <Mail
             aria-hidden
@@ -101,6 +104,11 @@ export function NewsletterForm({
           />
         </div>
         <SubmitButton tone={tone} />
+        </div>
+
+        {/* Must live inside the form so its token is posted with the action. */}
+        <Turnstile theme={tone === "dark" ? "dark" : "light"} onToken={setCaptchaToken} />
+        <input type="hidden" name="cf-turnstile-response" value={captchaToken ?? ""} />
       </form>
 
       <AnimatePresence mode="wait">

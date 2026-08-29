@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/field";
 import { Alert } from "@/components/ui/primitives";
 import { AuthHeading, PasswordInput, PasswordStrength, SupabaseNotice } from "@/components/forms/shared";
+import { Turnstile } from "@/components/forms/turnstile";
+import { isTurnstileEnabled } from "@/lib/turnstile";
 import {
   forgotPasswordSchema,
   resetPasswordSchema,
@@ -23,6 +25,7 @@ import { appOrigin } from "@/lib/site";
 export function ForgotPasswordForm() {
   const [sent, setSent] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   const {
     register,
@@ -42,8 +45,14 @@ export function ForgotPasswordForm() {
       return;
     }
 
+    if (isTurnstileEnabled && !captchaToken) {
+      setFormError("Please complete the security check below.");
+      return;
+    }
+
     const { error } = await supabase.auth.resetPasswordForEmail(values.email, {
       redirectTo: `${appOrigin()}/auth/callback?next=/reset-password`,
+      ...(captchaToken ? { captchaToken } : {}),
     });
 
     // Deliberately generic: the response must not reveal whether an account exists.
@@ -107,6 +116,8 @@ export function ForgotPasswordForm() {
             {...register("email")}
           />
         </Field>
+
+        <Turnstile onToken={setCaptchaToken} />
 
         <Button
           type="submit"

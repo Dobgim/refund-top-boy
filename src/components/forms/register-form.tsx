@@ -11,6 +11,8 @@ import { Checkbox, Field, Input, Select } from "@/components/ui/field";
 import { Alert } from "@/components/ui/primitives";
 import { FieldError as InlineError } from "@/components/ui/field";
 import { AuthHeading, PasswordInput, PasswordStrength, SupabaseNotice } from "@/components/forms/shared";
+import { Turnstile } from "@/components/forms/turnstile";
+import { isTurnstileEnabled } from "@/lib/turnstile";
 import { registerSchema, type RegisterValues } from "@/lib/validations/auth";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
@@ -20,6 +22,7 @@ import { appOrigin } from "@/lib/site";
 export function RegisterForm() {
   const router = useRouter();
   const [formError, setFormError] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   const {
     register,
@@ -48,6 +51,11 @@ export function RegisterForm() {
       return;
     }
 
+    if (isTurnstileEnabled && !captchaToken) {
+      setFormError("Please complete the security check below.");
+      return;
+    }
+
     const { error } = await supabase.auth.signUp({
       email: values.email,
       password: values.password,
@@ -55,6 +63,8 @@ export function RegisterForm() {
         // Stored on the auth user and copied into `profiles` by a database trigger.
         data: { full_name: values.fullName, country: values.country },
         emailRedirectTo: `${appOrigin()}/auth/callback?next=/dashboard`,
+        // Supabase re-checks this with Cloudflare before creating the account.
+        ...(captchaToken ? { captchaToken } : {}),
       },
     });
 
@@ -162,6 +172,8 @@ export function RegisterForm() {
             <InlineError>{errors.acceptTerms?.message}</InlineError>
           </div>
         </div>
+
+        <Turnstile onToken={setCaptchaToken} />
 
         <Button
           type="submit"
