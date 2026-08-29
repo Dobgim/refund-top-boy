@@ -25,6 +25,8 @@ export type ProfileVerificationStatus = "unverified" | "pending" | "verified" | 
 export interface Profile {
   id: string;
   full_name: string;
+  username: string | null;
+  gender: "female" | "male" | "non_binary" | "prefer_not_to_say" | null;
   email: string;
   country: string | null;
   role: UserRole;

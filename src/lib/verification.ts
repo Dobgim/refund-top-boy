@@ -75,3 +75,13 @@ export function validateIdFile(file: File, side: string): string | null {
   }
   return null;
 }
+
+export const GENDERS = ["female", "male", "non_binary", "prefer_not_to_say"] as const;
+export type Gender = (typeof GENDERS)[number];
+
+export const GENDER_LABELS: Record<Gender, string> = {
+  female: "Female",
+  male: "Male",
+  non_binary: "Non-binary",
+  prefer_not_to_say: "Prefer not to say",
+};

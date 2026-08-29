@@ -8,6 +8,41 @@ export const passwordSchema = z
   .regex(/[A-Z]/, "Include an uppercase letter")
   .regex(/[0-9]/, "Include a number");
 
+/** Step one of registration: who you are and how you sign in. */
+export const registerCredentialsSchema = z
+  .object({
+    fullName: z.string().trim().min(2, "Enter your full name").max(80, "Name is too long"),
+    email: z.email("Enter a valid email address").trim().toLowerCase(),
+    password: passwordSchema,
+    confirmPassword: z.string(),
+  })
+  .refine((values) => values.password === values.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Passwords do not match",
+  });
+
+export type RegisterCredentials = z.infer<typeof registerCredentialsSchema>;
+
+/** Step two: the profile details shown around the product. */
+export const registerProfileSchema = z.object({
+  username: z
+    .string()
+    .trim()
+    .min(3, "Usernames are at least 3 characters")
+    .max(20, "Usernames are at most 20 characters")
+    .regex(
+      /^[a-zA-Z][a-zA-Z0-9_]*$/,
+      "Start with a letter, then letters, numbers or underscores only",
+    ),
+  gender: z.enum(["female", "male", "non_binary", "prefer_not_to_say"], {
+    message: "Choose an option",
+  }),
+  country: z.string().trim().min(2, "Select your country"),
+  acceptTerms: z.literal(true, { message: "You must accept the terms to continue" }),
+});
+
+export type RegisterProfile = z.infer<typeof registerProfileSchema>;
+
 export const registerSchema = z
   .object({
     fullName: z
