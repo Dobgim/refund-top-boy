@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import {
   ArrowLeft,
   BanknoteArrowDown,
+  PencilLine,
   CalendarDays,
   Hash,
   Landmark,
@@ -19,11 +20,12 @@ import {
   MessageThread,
 } from "@/components/dashboard/claim-interactions";
 import { getMyClaim } from "@/lib/queries";
+import { ButtonLink } from "@/components/ui/button";
 import { CLAIM_TYPE_LABELS, SETTLEMENT_METHOD_LABELS } from "@/lib/claims";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 type Params = Promise<{ reference: string }>;
-type Search = Promise<{ submitted?: string }>;
+type Search = Promise<{ submitted?: string; updated?: string; locked?: string }>;
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { reference } = await params;
@@ -59,7 +61,7 @@ export default async function ClaimDetailPage({
   searchParams: Search;
 }) {
   const { reference } = await params;
-  const { submitted } = await searchParams;
+  const { submitted, updated, locked } = await searchParams;
   const { data: claim, demo } = await getMyClaim(reference);
 
   if (!claim) notFound();
@@ -81,11 +83,45 @@ export default async function ClaimDetailPage({
         </Alert>
       )}
 
+      {updated && (
+        <Alert tone="success" title="Case updated">
+          Your changes were saved and the case has been resubmitted for review.
+        </Alert>
+      )}
+      {locked && (
+        <Alert tone="warning" title="This case can no longer be edited">
+          A decision has already been recorded against it. Send a message below if something is
+          wrong and a reviewer will pick it up.
+        </Alert>
+      )}
+
       <PageHeader
         title={claim.reference}
         description={claim.reason}
-        action={<StatusBadge status={claim.status} className="text-sm" />}
+        action={
+          <div className="flex flex-wrap items-center gap-3">
+            <StatusBadge status={claim.status} className="text-sm" />
+            {["submitted", "documents_required", "under_review"].includes(claim.status) && (
+              <ButtonLink
+                href={`/dashboard/claims/${claim.reference}/edit`}
+                variant="outline"
+                size="sm"
+                leadingIcon={<PencilLine aria-hidden className="size-4" />}
+              >
+                Edit claim
+              </ButtonLink>
+            )}
+          </div>
+        }
       />
+
+      {claim.status === "documents_required" && (
+        <Alert tone="warning" title="More information is needed">
+          A reviewer has asked for something before this can continue. Use{" "}
+          <strong className="font-semibold">Edit claim</strong> to correct the details or attach the
+          missing evidence, then resubmit.
+        </Alert>
+      )}
 
       {claim.settled_at && claim.approved_amount !== null && (
         <Card className="border-mint-500/30 bg-mint-500/5 p-5 sm:p-6">

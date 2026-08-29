@@ -373,3 +373,106 @@ export async function decideClaim(
 
   return updateClaimStatus(claimId, map.status, map.note);
 }
+
+/**
+ * Lets the case owner correct their own claim and resubmit it.
+ *
+ * Only while the case is still open to change: once a reviewer has approved,
+ * resolved or closed it, the record is frozen so the decision refers to the
+ * evidence it was actually made on. RLS grants update on `claims` to reviewers
+ * only, so this runs through a SECURITY DEFINER-free path by re-checking
+ * ownership here and writing via the owner's own session.
+ */
+const OWNER_EDITABLE: ClaimStatus[] = ["submitted", "documents_required", "under_review"];
+
+export async function updateOwnClaim(claimId: string, raw: unknown): Promise<CreateClaimResult> {
+  const parsed = claimSchema.safeParse(raw);
+  if (!parsed.success) {
+    const fieldErrors: Record<string, string> = {};
+    for (const issue of parsed.error.issues) {
+      const key = issue.path.join(".");
+      fieldErrors[key] ??= issue.message;
+    }
+    return { ok: false, message: "Please correct the highlighted fields.", fieldErrors };
+  }
+
+  const supabase = await getSupabaseServerClient();
+  if (!supabase) return { ok: false, message: "Editing is unavailable in this preview." };
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, message: "Your session expired. Please sign in again." };
+
+  const { data: claim, error: readError } = await supabase
+    .from("claims")
+    .select("id, user_id, status, reference")
+    .eq("id", claimId)
+    .maybeSingle();
+
+  if (readError) return { ok: false, message: `The case could not be read: ${readError.message}` };
+  if (!claim) return { ok: false, message: "That case no longer exists." };
+
+  const row = claim as { user_id: string; status: ClaimStatus; reference: string };
+
+  if (row.user_id !== user.id) {
+    return { ok: false, message: "You can only edit your own case." };
+  }
+
+  if (!OWNER_EDITABLE.includes(row.status)) {
+    return {
+      ok: false,
+      message:
+        "This case has already been decided, so it can no longer be edited. Send a message on the case if something is wrong.",
+    };
+  }
+
+  const v = parsed.data;
+  const { data: updated, error: updateError } = await supabase
+    .from("claims")
+    .update({
+      claim_type: v.claimType,
+      amount: v.amount,
+      currency: v.currency,
+      transaction_date: v.transactionDate,
+      transaction_type: v.transactionType,
+      transaction_reference: v.transactionReference || null,
+      reason: v.reason,
+      description: v.description,
+      supporting_details: v.supportingDetails || null,
+      contact_name: v.contactName,
+      contact_email: v.contactEmail,
+      country: v.country,
+      last_update: new Date().toISOString(),
+    })
+    .eq("id", claimId)
+    .eq("user_id", user.id)
+    .select("id");
+
+  if (updateError) {
+    return { ok: false, message: `The case could not be saved: ${updateError.message}` };
+  }
+
+  // RLS reports a blocked update as zero rows rather than an error, so an
+  // empty result here means the policy refused it, not that nothing changed.
+  if (!updated || updated.length === 0) {
+    return {
+      ok: false,
+      message:
+        "The case could not be saved. If this persists, the database may be missing supabase/06_owner_edit.sql.",
+    };
+  }
+
+  // Resubmitting puts the case back in the queue and tells the reviewer why.
+  await supabase.from("claim_messages").insert({
+    claim_id: claimId,
+    sender_id: user.id,
+    sender_role: "user",
+    body: "I have corrected the details on this case and resubmitted it for review.",
+  });
+
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/claims");
+  revalidatePath(`/dashboard/claims/${row.reference}`);
+  return { ok: true, claimId, reference: row.reference };
+}

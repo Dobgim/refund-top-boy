@@ -19,7 +19,7 @@ import { Field, Fieldset, Input, Select, Textarea } from "@/components/ui/field"
 import { Alert, Card } from "@/components/ui/primitives";
 import { SupabaseNotice } from "@/components/forms/shared";
 import { claimSchema, validateUploadFile, type ClaimValues } from "@/lib/validations/claim";
-import { createClaim } from "@/app/actions/claims";
+import { createClaim, updateOwnClaim } from "@/app/actions/claims";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { DOCUMENTS_BUCKET, isSupabaseConfigured } from "@/lib/supabase/config";
 import {
@@ -44,14 +44,22 @@ interface Attachment {
   error?: string;
 }
 
+export interface ClaimFormInitialValues extends Partial<ClaimValues> {
+  id: string;
+  reference: string;
+}
+
 export function ClaimForm({
   defaultName,
   defaultEmail,
   defaultCountry,
+  /** Present when correcting an existing case rather than filing a new one. */
+  editing,
 }: {
   defaultName: string;
   defaultEmail: string;
   defaultCountry: string;
+  editing?: ClaimFormInitialValues;
 }) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -69,18 +77,18 @@ export function ClaimForm({
   } = useForm<ClaimValues>({
     resolver: zodResolver(claimSchema),
     defaultValues: {
-      contactName: defaultName,
-      contactEmail: defaultEmail,
-      country: defaultCountry,
-      transactionDate: "",
-      transactionType: "",
-      amount: undefined as unknown as number,
-      currency: "USD",
-      transactionReference: "",
-      claimType: "card_dispute",
-      reason: "",
-      description: "",
-      supportingDetails: "",
+      contactName: editing?.contactName ?? defaultName,
+      contactEmail: editing?.contactEmail ?? defaultEmail,
+      country: editing?.country ?? defaultCountry,
+      transactionDate: editing?.transactionDate ?? "",
+      transactionType: editing?.transactionType ?? "",
+      amount: (editing?.amount ?? undefined) as unknown as number,
+      currency: editing?.currency ?? "USD",
+      transactionReference: editing?.transactionReference ?? "",
+      claimType: editing?.claimType ?? "card_dispute",
+      reason: editing?.reason ?? "",
+      description: editing?.description ?? "",
+      supportingDetails: editing?.supportingDetails ?? "",
     },
   });
 
@@ -106,7 +114,9 @@ export function ClaimForm({
     setFormError(null);
     setPhase("saving");
 
-    const result = await createClaim(values);
+    const result = editing
+      ? await updateOwnClaim(editing.id, values)
+      : await createClaim(values);
 
     if (!result.ok) {
       setPhase("idle");
@@ -119,21 +129,46 @@ export function ClaimForm({
       return;
     }
 
+    if (editing) {
+      // Any newly attached files still need uploading against the same case.
+      const supabaseEdit = getSupabaseBrowserClient();
+      if (supabaseEdit && attachments.some((a) => a.state === "queued")) {
+        setPhase("uploading");
+        await uploadAttachments(supabaseEdit, editing.id);
+      }
+      router.push(`/dashboard/claims/${editing.reference}?updated=1`);
+      router.refresh();
+      return;
+    }
+
     // Upload evidence only after the case row exists, so every object has an owner.
     const supabase = getSupabaseBrowserClient();
     if (supabase && attachments.length > 0 && result.claimId) {
       setPhase("uploading");
+      await uploadAttachments(supabase, result.claimId);
+    }
+
+    router.push(`/dashboard/claims/${result.reference}?submitted=1`);
+    router.refresh();
+  }
+
+  async function uploadAttachments(
+    supabase: NonNullable<ReturnType<typeof getSupabaseBrowserClient>>,
+    claimId: string,
+  ) {
+    {
       const {
         data: { user },
       } = await supabase.auth.getUser();
 
       for (const attachment of attachments) {
+        if (attachment.state !== "queued") continue;
         setAttachments((current) =>
           current.map((item) => (item.id === attachment.id ? { ...item, state: "uploading" } : item)),
         );
 
         const cleanName = safeFileName(attachment.file.name);
-        const path = `${user?.id}/${result.claimId}/${attachment.uid}-${cleanName}`;
+        const path = `${user?.id}/${claimId}/${attachment.uid}-${cleanName}`;
 
         const { error: uploadError } = await supabase.storage
           .from(DOCUMENTS_BUCKET)
@@ -151,7 +186,7 @@ export function ClaimForm({
         }
 
         await supabase.from("claim_documents").insert({
-          claim_id: result.claimId,
+          claim_id: claimId,
           user_id: user?.id,
           file_name: cleanName,
           storage_path: path,
@@ -164,9 +199,6 @@ export function ClaimForm({
         );
       }
     }
-
-    router.push(`/dashboard/claims/${result.reference}?submitted=1`);
-    router.refresh();
   }
 
   const uploaded = attachments.filter((item) => item.state === "done").length;
@@ -431,7 +463,11 @@ export function ClaimForm({
           loading={busy}
           leadingIcon={<Send aria-hidden className="size-4.5" />}
         >
-          {phase === "uploading" ? "Uploading documents" : "Submit case"}
+          {phase === "uploading"
+          ? "Uploading documents"
+          : editing
+            ? "Save and resubmit"
+            : "Submit case"}
         </Button>
       </div>
     </form>
