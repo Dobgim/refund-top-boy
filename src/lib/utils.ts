@@ -106,7 +106,7 @@ export function safeFileName(name: string): string {
   return cleaned || "document";
 }
 
-/** RR-2026-0001 style human readable claim reference. */
+/** RR-2019-0001 style human readable claim reference. */
 export function generateClaimReference(sequence?: number): string {
   const year = new Date().getFullYear();
   const suffix =

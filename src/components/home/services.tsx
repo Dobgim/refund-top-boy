@@ -41,7 +41,7 @@ export function ServicesSection() {
                 >
                   <div
                     aria-hidden
-                    className="pointer-events-none absolute inset-0 bg-[linear-gradient(160deg,rgb(99_102_241/0.07),transparent_55%)] opacity-0 transition-opacity duration-400 group-hover:opacity-100"
+                    className="pointer-events-none absolute inset-0 bg-royal-50/60 opacity-0 transition-opacity duration-400 group-hover:opacity-100"
                   />
 
                   <motion.span

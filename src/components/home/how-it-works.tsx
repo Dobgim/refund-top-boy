@@ -64,7 +64,7 @@ export function HowItWorksSection({
           >
             <motion.div
               style={{ scaleY, transformOrigin: "top" }}
-              className="h-full w-px bg-[linear-gradient(180deg,#6366f1,#14b98a)]"
+              className="h-full w-px bg-royal-600"
             />
           </div>
 

@@ -9,11 +9,12 @@ import { FlagAU, FlagUS } from "@/components/brand/flags";
 import { LogoMark } from "@/components/brand/logo";
 import { useMotionSafe } from "@/lib/animations/use-reduced-motion";
 import { EASE_OUT } from "@/lib/animations/variants";
+import { cn } from "@/lib/utils";
 
 const RECEIPT_ROWS = [
   ["Code", "NVX1256SJKL0"],
-  ["Reference", "RR-2026-0118"],
-  ["Date", "12 August 2026"],
+  ["Reference", "RR-2019-0118"],
+  ["Date", "12 August 2019"],
   ["Time", "9:13 PM"],
 ];
 
@@ -52,12 +53,14 @@ function PartyRow({
   );
 }
 
-/** Original abstract portrait: a gradient disc with an initial and a soft arc. */
-function Portrait({ initials, from, to }: { initials: string; from: string; to: string }) {
+/** Original abstract portrait: a solid disc carrying the account initials. */
+function Portrait({ initials, tone }: { initials: string; tone: string }) {
   return (
     <span
-      className="grid size-11 place-items-center rounded-full font-display text-sm font-extrabold text-white"
-      style={{ backgroundImage: `linear-gradient(135deg, ${from}, ${to})` }}
+      className={cn(
+        "grid size-11 place-items-center rounded-full font-display text-sm font-extrabold text-white",
+        tone,
+      )}
       aria-hidden
     >
       {initials}
@@ -75,15 +78,15 @@ export function InstantTransferSection() {
       {/* aurora backdrop */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-40 -left-32 size-[42rem] rounded-full bg-royal-700/35 blur-[140px]"
+        className="pointer-events-none absolute -top-40 -left-32 size-[42rem] rounded-full bg-royal-700/20 blur-[140px]"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute top-1/3 right-0 size-[34rem] translate-x-1/3 rounded-full bg-fuchsia-600/20 blur-[140px]"
+        className="pointer-events-none absolute top-1/3 right-0 size-[34rem] translate-x-1/3 rounded-full bg-royal-800/25 blur-[140px]"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_12%,rgb(99_102_241/0.18),transparent_55%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_12%,rgb(79_70_229/0.12),transparent_60%)]"
       />
 
       <Container className="relative">
@@ -99,7 +102,7 @@ export function InstantTransferSection() {
             >
               Your Money Back,
               <br />
-              <span className="bg-[linear-gradient(100deg,#a3b2fd,#c084fc_45%,#f7d98a)] bg-clip-text text-transparent">
+              <span className="text-royal-300">
                 Straight To You
               </span>
             </motion.h2>
@@ -126,7 +129,7 @@ export function InstantTransferSection() {
               <PartyRow
                 name="Amara Osei sending"
                 amount="$466.50"
-                avatar={<Portrait initials="AO" from="#6366f1" to="#4338ca" />}
+                avatar={<Portrait initials="AO" tone="bg-royal-600" />}
                 flag={<FlagUS className="size-13 sm:size-14" />}
               />
 
@@ -134,7 +137,7 @@ export function InstantTransferSection() {
               <div className="relative my-6 flex items-center gap-4" aria-hidden>
                 <span className="h-px flex-1 bg-[repeating-linear-gradient(90deg,var(--color-ink-200)_0_6px,transparent_6px_12px)]" />
                 <motion.span
-                  className="grid size-13 shrink-0 place-items-center rounded-full bg-[linear-gradient(135deg,#8b5cf6,#d946ef)] text-white shadow-[0_14px_30px_-12px_rgb(139_92_246/0.9)]"
+                  className="grid size-13 shrink-0 place-items-center rounded-full bg-royal-600 text-white shadow-[0_14px_30px_-12px_rgb(79_70_229/0.8)]"
                   animate={reduced ? undefined : { scale: [1, 1.07, 1] }}
                   transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
                 >
@@ -146,7 +149,7 @@ export function InstantTransferSection() {
               <PartyRow
                 name="William Adeyemi receiving"
                 amount="$466.50"
-                avatar={<Portrait initials="WA" from="#14b98a" to="#0d9a72" />}
+                avatar={<Portrait initials="WA" tone="bg-mint-600" />}
                 flag={<FlagAU className="size-13 sm:size-14" />}
               />
 
@@ -161,7 +164,7 @@ export function InstantTransferSection() {
                   whileInView={{ opacity: 1, scale: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: 0.7, ease: EASE_OUT }}
-                  className="flex w-[19rem] items-center gap-3 rounded-2xl bg-[linear-gradient(100deg,#8b5cf6,#e879a8)] px-4 py-3.5 text-white shadow-[0_20px_46px_-20px_rgb(139_92_246/0.9)]"
+                  className="flex w-[19rem] items-center gap-3 rounded-2xl bg-mint-600 px-4 py-3.5 text-white shadow-[0_20px_46px_-20px_rgb(13_154_114/0.8)]"
                 >
                   <span className="grid size-9 shrink-0 place-items-center rounded-full bg-white/25">
                     <Check className="size-4.5" strokeWidth={3} />
@@ -206,13 +209,13 @@ export function InstantTransferSection() {
               className="absolute top-[28%] right-0 z-0 w-[15rem] translate-x-[18%] sm:w-[17rem] lg:translate-x-[22%]"
             >
               <div className="[transform:rotate(-24deg)_skewY(6deg)]">
-                <div className="relative overflow-hidden rounded-2xl bg-[linear-gradient(135deg,#241f52,#3d2f7a_55%,#171338)] p-5 shadow-[0_36px_60px_-28px_rgb(0_0_0/0.9)] ring-1 ring-white/10 ring-inset">
+                <div className="relative overflow-hidden rounded-2xl bg-ink-900 p-5 shadow-[0_36px_60px_-28px_rgb(0_0_0/0.9)] ring-1 ring-white/10 ring-inset">
                   <div
                     aria-hidden
                     className="absolute -top-10 -right-6 size-28 rounded-full bg-white/8 blur-xl"
                   />
                   <div className="relative flex items-center gap-2">
-                    <LogoMark className="size-7" gradientId="card-mark" />
+                    <LogoMark className="size-7" />
                     <span className="font-display text-base font-extrabold tracking-tight text-white">
                       RoyalRefund
                     </span>
@@ -254,7 +257,7 @@ export function InstantTransferSection() {
                 <div className="mt-4 rounded-[1.4rem] bg-ink-800/70 p-5 text-center ring-1 ring-white/8 ring-inset">
                   <p className="font-display text-lg font-extrabold text-white">Payment Success!</p>
                   <p className="mx-auto mt-2 max-w-[13rem] text-xs leading-relaxed text-ink-300">
-                    Case RR-2026-0118 has been resolved and the amount returned.
+                    Case RR-2019-0118 has been resolved and the amount returned.
                   </p>
 
                   <p className="mt-5 text-[0.65rem] font-semibold tracking-[0.16em] text-ink-400 uppercase">
@@ -275,7 +278,7 @@ export function InstantTransferSection() {
                     ))}
                   </dl>
 
-                  <div className="mt-6 rounded-full bg-[linear-gradient(100deg,#8b5cf6,#e879a8)] py-3 text-sm font-bold text-white">
+                  <div className="mt-6 rounded-full bg-royal-600 py-3 text-sm font-bold text-white">
                     Done
                   </div>
                   <p className="mt-3 text-xs font-semibold text-ink-400">View case</p>

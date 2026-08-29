@@ -33,7 +33,7 @@ export default async function AdminUsersPage() {
             {users.map((user) => (
               <li key={user.id}>
                 <Card className="flex items-center gap-3 p-4">
-                  <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[linear-gradient(135deg,#4338ca,#6366f1)] font-display text-xs font-extrabold text-white">
+                  <span className="grid size-10 shrink-0 place-items-center rounded-full bg-royal-600 font-display text-xs font-extrabold text-white">
                     {initialsOf(user.full_name)}
                   </span>
                   <span className="min-w-0 flex-1">
@@ -67,7 +67,7 @@ export default async function AdminUsersPage() {
                     <tr key={user.id} className="transition-colors hover:bg-royal-50/40">
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
-                          <span className="grid size-9 shrink-0 place-items-center rounded-full bg-[linear-gradient(135deg,#4338ca,#6366f1)] font-display text-[0.65rem] font-extrabold text-white">
+                          <span className="grid size-9 shrink-0 place-items-center rounded-full bg-royal-600 font-display text-[0.65rem] font-extrabold text-white">
                             {initialsOf(user.full_name)}
                           </span>
                           <span className="min-w-0">

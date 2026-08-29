@@ -11,7 +11,7 @@ export default function TermsPage() {
   return (
     <LegalPage
       title="Terms of Use"
-      updated="28 August 2026"
+      updated="28 August 2019"
       intro="What you can expect from this platform, and what it expects from you."
       sections={[
         {

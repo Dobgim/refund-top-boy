@@ -8,35 +8,21 @@ import { cn } from "@/lib/utils";
  */
 export function LogoMark({
   className,
-  gradientId = "rr-mark",
   monochrome = false,
 }: {
   className?: string;
-  gradientId?: string;
   monochrome?: boolean;
 }) {
+  const field = monochrome ? "currentColor" : "#4338ca";
+
   return (
     <svg viewBox="0 0 48 48" role="img" aria-label="RoyalRefund" className={cn("size-9", className)}>
-      <defs>
-        <linearGradient id={`${gradientId}-bg`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor={monochrome ? "currentColor" : "#6366f1"} />
-          <stop offset="55%" stopColor={monochrome ? "currentColor" : "#4338ca"} />
-          <stop offset="100%" stopColor={monochrome ? "currentColor" : "#2e2a80"} />
-        </linearGradient>
-        <linearGradient id={`${gradientId}-shine`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.28" />
-          <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-
-      <rect width="48" height="48" rx="13" fill={`url(#${gradientId}-bg)`} />
-      <rect width="48" height="26" rx="13" fill={`url(#${gradientId}-shine)`} />
+      <rect width="48" height="48" rx="13" fill={field} />
 
       {/* crown notches */}
       <path
         d="M15.5 12.6 18.6 15l2.6-3.4 2.8 3.6 2.8-3.6 2.6 3.4 3.1-2.4-1.1 4.4H16.6z"
         fill="#f2c866"
-        opacity="0.95"
       />
 
       {/* shield */}
@@ -57,7 +43,14 @@ export function LogoMark({
         strokeWidth="2.6"
         strokeLinecap="round"
       />
-      <path d="M28.6 18.6v4.6h-4.6" fill="none" stroke="#f2c866" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M28.6 18.6v4.6h-4.6"
+        fill="none"
+        stroke="#f2c866"
+        strokeWidth="2.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }

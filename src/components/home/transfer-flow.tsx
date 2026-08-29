@@ -76,10 +76,10 @@ function Connector({ orientation }: { orientation: "horizontal" | "vertical" }) 
       {!reduced && (
         <motion.div
           className={cn(
-            "absolute rounded-full bg-[linear-gradient(90deg,#6366f1,#14b98a)]",
+            "absolute rounded-full bg-royal-600",
             horizontal
               ? "top-1/2 left-0 h-0.5 -translate-y-1/2"
-              : "top-0 left-1/2 w-0.5 -translate-x-1/2 bg-[linear-gradient(180deg,#6366f1,#14b98a)]",
+              : "top-0 left-1/2 w-0.5 -translate-x-1/2 bg-royal-600",
           )}
           initial={horizontal ? { width: "0%" } : { height: "0%" }}
           animate={horizontal ? { width: ["0%", "100%"] } : { height: ["0%", "100%"] }}
@@ -179,7 +179,7 @@ export function TransferFlowSection() {
               <Party
                 role="Receiver"
                 name="Amara Osei"
-                meta="RR-2026-0118"
+                meta="RR-2019-0118"
                 icon={User}
                 accent="mint"
               />

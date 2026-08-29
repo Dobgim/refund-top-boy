@@ -38,11 +38,11 @@ export function Hero() {
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-[linear-gradient(to_bottom,transparent,rgb(8_12_28/0.85)_60%,var(--color-ink-950))]"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-[linear-gradient(to_bottom,transparent,var(--color-ink-950))]"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-[linear-gradient(90deg,transparent,rgb(163_178_253/0.35),transparent)]"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-white/10"
       />
 
       <Container className="relative">
@@ -60,7 +60,7 @@ export function Hero() {
             >
               Recover What
               <br className="hidden sm:block" />{" "}
-              <span className="bg-[linear-gradient(100deg,#a3b2fd,#c084fc_45%,#f7d98a)] bg-clip-text text-transparent">
+              <span className="text-royal-300">
                 Belongs To You
               </span>
             </motion.h1>

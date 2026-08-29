@@ -11,7 +11,7 @@ export default function RefundPolicyPage() {
   return (
     <LegalPage
       title="Refund Policy"
-      updated="28 August 2026"
+      updated="28 August 2019"
       intro="How a case is assessed, what makes one eligible, and what happens at each possible outcome."
       sections={[
         {

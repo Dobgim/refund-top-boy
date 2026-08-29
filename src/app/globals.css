@@ -126,11 +126,11 @@ body {
 }
 
 /* Slow-drifting colour wash used behind dark hero sections. */
+/* A single restrained brand-blue wash. Enough to lift a flat navy panel,
+   without the multi-hue look that reads as consumer rather than financial. */
 @utility aurora {
   background-image:
-    radial-gradient(60% 55% at 18% 12%, rgb(99 102 241 / 0.34), transparent 65%),
-    radial-gradient(50% 50% at 88% 26%, rgb(217 70 239 / 0.16), transparent 62%),
-    radial-gradient(65% 60% at 62% 96%, rgb(20 185 138 / 0.12), transparent 60%);
+    radial-gradient(70% 60% at 50% 0%, rgb(79 70 229 / 0.16), transparent 70%);
 }
 
 @utility mask-fade-b {

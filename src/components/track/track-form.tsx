@@ -37,7 +37,7 @@ export function TrackForm() {
             id="reference"
             value={value}
             onChange={(event) => setValue(event.target.value.toUpperCase())}
-            placeholder="RR-2026-0118"
+            placeholder="RR-2019-0118"
             autoComplete="off"
             spellCheck={false}
             aria-invalid={Boolean(error)}
@@ -58,10 +58,10 @@ export function TrackForm() {
         Your reference was issued when the case was submitted. Try{" "}
         <button
           type="button"
-          onClick={() => setValue("RR-2026-0118")}
+          onClick={() => setValue("RR-2019-0118")}
           className="font-mono font-semibold text-royal-600 underline underline-offset-2"
         >
-          RR-2026-0118
+          RR-2019-0118
         </button>{" "}
         to see an example case.
       </p>

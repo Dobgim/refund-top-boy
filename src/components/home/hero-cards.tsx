@@ -49,8 +49,8 @@ function PaymentCard({
       className={cn(
         "relative aspect-[1.58/1] w-full overflow-hidden rounded-[1.35rem] p-6 shadow-[0_44px_70px_-30px_rgb(0_0_0/0.85)] ring-1 ring-inset",
         dark
-          ? "bg-[linear-gradient(135deg,#241f52,#332a70_50%,#171338)] text-white ring-white/12"
-          : "bg-[linear-gradient(135deg,#dbeaf2,#c3dbe8_55%,#a9c9dc)] text-ink-900 ring-white/60",
+          ? "bg-ink-900 text-white ring-white/12"
+          : "bg-ink-100 text-ink-900 ring-white/60",
         className,
       )}
     >
@@ -65,7 +65,7 @@ function PaymentCard({
       <div className="relative flex items-start justify-between">
         <Chip />
         <div className="flex items-center gap-1.5">
-          <LogoMark className="size-6" gradientId={`hero-card-${tone}`} />
+          <LogoMark className="size-6" />
           <span className="font-display text-sm font-extrabold tracking-tight">RoyalRefund</span>
         </div>
       </div>
@@ -101,7 +101,7 @@ export function HeroCards({ className }: { className?: string }) {
     <div className={cn("relative mx-auto w-full max-w-[30rem]", className)}>
       <div
         aria-hidden
-        className="absolute top-1/2 left-1/2 size-[30rem] max-w-[130%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgb(139_92_246/0.4),transparent)] blur-2xl"
+        className="absolute top-1/2 left-1/2 size-[26rem] max-w-[120%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-royal-600/20 blur-[90px]"
       />
 
       {/* back card */}

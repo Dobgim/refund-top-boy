@@ -39,7 +39,7 @@ export function PartnersSection() {
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,rgb(52_211_164/0.35),transparent)]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/10"
       />
 
       <Container className="relative">
@@ -57,7 +57,7 @@ export function PartnersSection() {
 
           <h2 className="text-balance-tight mt-6 font-display text-3xl leading-[1.1] font-extrabold tracking-tight sm:text-4xl lg:text-[2.7rem]">
             Partnered with{" "}
-            <span className="bg-[linear-gradient(100deg,#34d3a4,#5eead4_55%,#7f8bf9)] bg-clip-text text-transparent">
+            <span className="text-mint-400">
               Europe&rsquo;s Leading Banks
             </span>
           </h2>

@@ -11,7 +11,7 @@ export default function CookiePolicyPage() {
   return (
     <LegalPage
       title="Cookie Policy"
-      updated="28 August 2026"
+      updated="28 August 2019"
       intro="RoyalRefund sets the minimum needed to keep you signed in. There is no advertising and no cross-site tracking."
       sections={[
         {

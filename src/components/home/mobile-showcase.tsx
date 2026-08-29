@@ -18,9 +18,9 @@ import { ButtonLink } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const ACTIVITY = [
-  { title: "Documents accepted", meta: "RR-2026-0121", tone: "good" as const },
-  { title: "Reviewer assigned", meta: "RR-2026-0118", tone: "info" as const },
-  { title: "Statement requested", meta: "RR-2026-0120", tone: "warn" as const },
+  { title: "Documents accepted", meta: "RR-2019-0121", tone: "good" as const },
+  { title: "Reviewer assigned", meta: "RR-2019-0118", tone: "info" as const },
+  { title: "Statement requested", meta: "RR-2019-0120", tone: "warn" as const },
 ];
 
 const SPARK = [26, 34, 30, 46, 41, 58, 52, 68, 74];
@@ -77,7 +77,7 @@ function PhoneMockup() {
             </div>
 
             {/* balance */}
-            <div className="relative overflow-hidden rounded-2xl bg-[linear-gradient(135deg,#1c1a4e,#4338ca)] p-4 text-white">
+            <div className="relative overflow-hidden rounded-2xl bg-royal-700 p-4 text-white">
               <div aria-hidden className="absolute -top-10 -right-6 size-24 rounded-full bg-white/10 blur-lg" />
               <p className="relative text-[0.6rem] font-bold tracking-[0.16em] text-white/60 uppercase">
                 Recovered balance
@@ -114,7 +114,7 @@ function PhoneMockup() {
                   viewport={{ once: true }}
                   transition={{ duration: 1.2, delay: 0.7, ease: EASE_OUT }}
                   style={reduced ? { width: "68%" } : undefined}
-                  className="h-full rounded-full bg-[linear-gradient(90deg,#6366f1,#14b98a)]"
+                  className="h-full rounded-full bg-royal-600"
                 />
               </div>
             </div>

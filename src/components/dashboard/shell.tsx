@@ -95,7 +95,7 @@ function UserCard({
 }) {
   return (
     <div className="flex items-center gap-3 rounded-xl border border-ink-100 bg-white p-3">
-      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[linear-gradient(135deg,#4338ca,#6366f1)] font-display text-xs font-extrabold text-white">
+      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-royal-600 font-display text-xs font-extrabold text-white">
         {initialsOf(name)}
       </span>
       <span className="min-w-0 flex-1">

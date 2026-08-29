@@ -15,8 +15,8 @@ import { EASE_OUT } from "@/lib/animations/variants";
 import { cn } from "@/lib/utils";
 
 const TRANSACTIONS = [
-  { label: "Duplicate charge", meta: "RR-2026-0118", amount: "+ $486.50", positive: true },
-  { label: "Subscription refund", meta: "RR-2026-0119", amount: "+ €129.00", positive: true },
+  { label: "Duplicate charge", meta: "RR-2019-0118", amount: "+ $486.50", positive: true },
+  { label: "Subscription refund", meta: "RR-2019-0119", amount: "+ €129.00", positive: true },
   { label: "Review fee", meta: "No charge", amount: "- $0.00", positive: false },
 ];
 
@@ -33,7 +33,7 @@ export function RecoveryConsole({ className }: { className?: string }) {
     <div className={cn("relative mx-auto w-full max-w-[30rem]", className)}>
       <div
         aria-hidden
-        className="absolute -inset-8 rounded-[3rem] bg-[radial-gradient(closest-side,rgb(99_102_241/0.35),transparent)] blur-2xl"
+        className="absolute -inset-8 rounded-[3rem] bg-royal-600/18 blur-[90px]"
       />
 
       <motion.div
@@ -44,7 +44,7 @@ export function RecoveryConsole({ className }: { className?: string }) {
       >
         <div className="rounded-[1.35rem] bg-white p-5 shadow-[0_30px_70px_-40px_rgb(8_12_28/0.9)]">
           {/* account card */}
-          <div className="relative overflow-hidden rounded-2xl bg-[linear-gradient(135deg,#2e2a80,#4338ca_45%,#6366f1)] p-5 text-white">
+          <div className="relative overflow-hidden rounded-2xl bg-royal-700 p-5 text-white">
             <div aria-hidden className="absolute -top-14 -right-10 size-40 rounded-full bg-white/10 blur-xl" />
             <div className="relative flex items-start justify-between gap-4">
               <div>
@@ -90,7 +90,7 @@ export function RecoveryConsole({ className }: { className?: string }) {
                 initial={reduced ? false : { width: 0 }}
                 animate={{ width: "68%" }}
                 transition={{ duration: 1.3, delay: 0.6, ease: EASE_OUT }}
-                className="h-full rounded-full bg-[linear-gradient(90deg,#6366f1,#14b98a)]"
+                className="h-full rounded-full bg-royal-600"
                 style={reduced ? { width: "68%" } : undefined}
               />
             </div>
@@ -186,7 +186,7 @@ export function RecoveryConsole({ className }: { className?: string }) {
           <span className="min-w-0">
             <span className="block text-xs font-bold text-ink-950">Documents accepted</span>
             <span className="block truncate font-mono text-[0.66rem] text-ink-400">
-              RR-2026-0121
+              RR-2019-0121
             </span>
           </span>
         </motion.div>

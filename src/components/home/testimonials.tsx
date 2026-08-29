@@ -13,9 +13,9 @@ import { initialsOf, cn } from "@/lib/utils";
 const AUTOPLAY_MS = 5200;
 
 const ACCENTS = {
-  royal: "from-royal-500 to-royal-800",
-  mint: "from-mint-400 to-mint-600",
-  gold: "from-gold-400 to-gold-600",
+  royal: "bg-royal-600",
+  mint: "bg-mint-600",
+  gold: "bg-gold-600",
 } as const;
 
 function Avatar({ name, accent }: { name: string; accent: keyof typeof ACCENTS }) {
@@ -23,7 +23,7 @@ function Avatar({ name, accent }: { name: string; accent: keyof typeof ACCENTS }
     <span
       aria-hidden
       className={cn(
-        "grid size-12 shrink-0 place-items-center rounded-full bg-gradient-to-br font-display text-sm font-extrabold text-white shadow-soft",
+        "grid size-12 shrink-0 place-items-center rounded-full font-display text-sm font-extrabold text-white shadow-soft",
         ACCENTS[accent],
       )}
     >

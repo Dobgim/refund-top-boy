@@ -27,7 +27,7 @@ function CaseIllustration() {
     <div className="relative mx-auto w-full max-w-[26rem]">
       <div
         aria-hidden
-        className="absolute -inset-6 rounded-[3rem] bg-[radial-gradient(closest-side,rgb(99_102_241/0.16),transparent)]"
+        className="absolute -inset-6 rounded-[3rem] bg-royal-600/8 blur-[70px]"
       />
 
       {/* progress ring */}
@@ -83,7 +83,7 @@ function CaseIllustration() {
             <p className="text-[0.68rem] font-bold tracking-[0.16em] text-ink-400 uppercase">
               Evidence checklist
             </p>
-            <p className="mt-1 font-mono text-sm font-bold text-ink-950">RR-2026-0118</p>
+            <p className="mt-1 font-mono text-sm font-bold text-ink-950">RR-2019-0118</p>
           </div>
           <span className="grid size-9 place-items-center rounded-xl bg-ink-950 text-gold-300">
             <Lock aria-hidden className="size-4" />

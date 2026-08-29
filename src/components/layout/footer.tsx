@@ -67,7 +67,7 @@ export function SiteFooter() {
         <div className="flex flex-col gap-6 border-t border-white/10 py-8 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
             <p className="text-sm text-ink-400">
-              &copy; {new Date().getFullYear()} {SITE.name}. All rights reserved.
+              &copy; 2019 {SITE.name}. All rights reserved.
             </p>
             <p className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1.5 text-xs font-medium text-ink-300 ring-1 ring-white/10 ring-inset">
               <Lock aria-hidden className="size-3.5 text-mint-400" />

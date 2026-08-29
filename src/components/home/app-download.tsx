@@ -14,7 +14,7 @@ export function AppDownloadSection() {
   const { reduced } = useMotionSafe();
 
   return (
-    <section className="relative isolate overflow-hidden bg-[linear-gradient(105deg,#0b0820_0%,#2a1060_45%,#3b1478_70%,#150b34_100%)] py-20 text-white sm:py-24 lg:py-28">
+    <section className="relative isolate overflow-hidden bg-royal-950 py-20 text-white sm:py-24 lg:py-28">
       <div
         aria-hidden
         className="pointer-events-none absolute top-1/2 left-[24%] size-[38rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-royal-500/30 blur-[130px]"
@@ -25,7 +25,7 @@ export function AppDownloadSection() {
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,rgb(255_255_255/0.22),transparent)]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/10"
       />
 
       <Container className="relative">
@@ -41,7 +41,7 @@ export function AppDownloadSection() {
             {/* glow disc behind the frame */}
             <div
               aria-hidden
-              className="absolute -inset-6 rounded-[3.5rem] bg-[radial-gradient(closest-side,rgb(167_139_250/0.45),transparent)] blur-2xl"
+              className="absolute -inset-6 rounded-[3.5rem] bg-royal-600/20 blur-[80px]"
             />
 
             <div className="relative overflow-hidden rounded-[2.5rem] ring-1 ring-white/15">
@@ -56,11 +56,11 @@ export function AppDownloadSection() {
               {/* tint the photo into the section palette */}
               <div
                 aria-hidden
-                className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgb(59_20_120/0.12),rgb(11_8_32/0.55))] mix-blend-multiply"
+                className="pointer-events-none absolute inset-0 bg-ink-950/25"
               />
               <div
                 aria-hidden
-                className="pointer-events-none absolute inset-0 bg-[linear-gradient(200deg,transparent_45%,rgb(59_20_120/0.55))]"
+                className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,rgb(28_26_78/0.55),transparent_55%)]"
               />
             </div>
 
@@ -94,7 +94,7 @@ export function AppDownloadSection() {
                 <span className="min-w-0">
                   <span className="block text-xs font-bold">Status changed to Approved</span>
                   <span className="block truncate font-mono text-[0.66rem] text-ink-400">
-                    RR-2026-0121
+                    RR-2019-0121
                   </span>
                 </span>
               </motion.div>
@@ -112,7 +112,7 @@ export function AppDownloadSection() {
             >
               RoyalRefund Is The Fastest
               <br className="hidden sm:block" /> Way To{" "}
-              <span className="bg-[linear-gradient(100deg,#a3b2fd,#c084fc_50%,#f7d98a)] bg-clip-text text-transparent">
+              <span className="text-royal-300">
                 Recover Your Money
               </span>
             </motion.h2>

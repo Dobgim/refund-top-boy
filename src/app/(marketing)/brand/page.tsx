@@ -129,7 +129,7 @@ export default function BrandPage() {
                 </div>
                 <div className="p-6">
                   <p className="text-xs font-semibold tracking-wide text-ink-400 uppercase">Mono · 700</p>
-                  <p className="mt-2 font-mono text-lg font-bold text-ink-950">RR-2026-0118</p>
+                  <p className="mt-2 font-mono text-lg font-bold text-ink-950">RR-2019-0118</p>
                 </div>
               </Card>
             </div>

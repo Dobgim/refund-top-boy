@@ -12,7 +12,7 @@ export default function PrivacyPage() {
   return (
     <LegalPage
       title="Privacy Policy"
-      updated="28 August 2026"
+      updated="28 August 2019"
       intro="A plain description of the data this platform holds, why it needs it, and the controls around it."
       sections={[
         {
