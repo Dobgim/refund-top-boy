@@ -73,19 +73,19 @@ export function InstantTransferSection() {
   const { reduced } = useMotionSafe();
 
   return (
-    <section className="relative isolate overflow-hidden bg-ink-950 py-20 text-white sm:py-24 lg:py-28">
+    <section className="relative isolate overflow-hidden border-t border-ink-100 bg-white py-20 text-ink-900 sm:py-24 lg:py-28">
       {/* aurora backdrop */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-40 -left-32 size-[42rem] rounded-full bg-royal-700/20 blur-[140px]"
+        className="pointer-events-none absolute -top-40 -left-32 size-[42rem] rounded-full bg-royal-600/5 blur-[140px]"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute top-1/3 right-0 size-[34rem] translate-x-1/3 rounded-full bg-royal-800/25 blur-[140px]"
+        className="pointer-events-none absolute top-1/3 right-0 size-[34rem] translate-x-1/3 rounded-full bg-royal-600/4 blur-[140px]"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_12%,rgb(79_70_229/0.12),transparent_60%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_12%,rgb(79_70_229/0.04),transparent_60%)]"
       />
 
       <Container className="relative">
@@ -97,11 +97,11 @@ export function InstantTransferSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.4 }}
               transition={{ duration: 0.7, ease: EASE_OUT }}
-              className="text-balance-tight font-display text-[2.5rem] leading-[1.06] font-extrabold tracking-[-0.03em] sm:text-5xl lg:text-[3.5rem]"
+              className="text-balance-tight font-display text-[2.5rem] leading-[1.06] font-extrabold tracking-[-0.03em] text-ink-950 sm:text-5xl lg:text-[3.5rem]"
             >
               Your Money Back,
               <br />
-              <span className="text-royal-300">
+              <span className="text-royal-600">
                 Straight To You
               </span>
             </motion.h2>
@@ -111,7 +111,7 @@ export function InstantTransferSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.4 }}
               transition={{ duration: 0.7, delay: 0.1, ease: EASE_OUT }}
-              className="mt-6 max-w-md text-base leading-relaxed text-ink-200"
+              className="mt-6 max-w-md text-base leading-relaxed text-ink-500"
             >
               When a case is approved, the recovered amount is returned to the account it left from,
               in the currency it was taken in. You see the confirmation the moment it clears.
@@ -123,7 +123,7 @@ export function InstantTransferSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.8, delay: 0.15, ease: EASE_OUT }}
-              className="relative mt-10 max-w-lg rounded-[1.75rem] bg-white p-6 shadow-[0_40px_80px_-40px_rgb(8_12_28/0.9)] sm:p-8"
+              className="relative mt-10 max-w-lg rounded-[1.75rem] border border-ink-100 bg-white p-6 shadow-lift sm:p-8"
             >
               <PartyRow
                 name="Amara Osei sending"
@@ -181,7 +181,7 @@ export function InstantTransferSection() {
           <div className="relative mx-auto w-full max-w-[26rem] lg:max-w-none">
             <div
               aria-hidden
-              className="absolute top-1/2 left-1/2 size-[26rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-royal-600/25 blur-[110px]"
+              className="absolute top-1/2 left-1/2 size-[26rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-royal-600/8 blur-[110px]"
             />
 
             {/* payment card behind the phone */}
@@ -277,7 +277,7 @@ export function InstantTransferSection() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.55, delay: 0.6, ease: EASE_OUT }}
-                className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-2 text-xs font-bold text-white backdrop-blur-md"
+                className="inline-flex items-center gap-2 rounded-full border border-ink-200 bg-white px-3.5 py-2 text-xs font-bold text-ink-800 shadow-soft"
               >
                 <ShieldCheck aria-hidden className="size-4 text-mint-400" />
                 Secured transfer

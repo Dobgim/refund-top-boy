@@ -101,29 +101,27 @@ export default async function TrackPage({ searchParams }: { searchParams: Search
 
   return (
     <>
-      <section className="relative overflow-hidden bg-ink-950 pt-30 pb-16 text-white sm:pt-34 lg:pt-38">
-        <div aria-hidden className="pointer-events-none absolute inset-0 aurora" />
-        <div aria-hidden className="pointer-events-none absolute inset-0 star-field mask-fade-b opacity-60" />
+      <section className="relative overflow-hidden border-b border-ink-100 bg-white pt-30 pb-16 text-ink-900 sm:pt-34 lg:pt-38">
         <div
           aria-hidden
-          className="pointer-events-none absolute -top-32 left-1/2 size-[34rem] -translate-x-1/2 rounded-full bg-royal-600/25 blur-[120px]"
+          className="pointer-events-none absolute -top-32 left-1/2 size-[34rem] -translate-x-1/2 rounded-full bg-royal-600/6 blur-[120px]"
         />
         <Container size="narrow" className="relative text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.06] px-3.5 py-1.5 text-xs font-semibold text-ink-200">
-            <Lock aria-hidden className="size-3.5 text-mint-400" />
+          <span className="inline-flex items-center gap-2 rounded-full border border-ink-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-ink-600">
+            <Lock aria-hidden className="size-3.5 text-mint-600" />
             No sign-in required
           </span>
-          <h1 className="text-balance-tight mt-6 font-display text-4xl leading-[1.08] font-extrabold tracking-tight sm:text-5xl">
+          <h1 className="text-balance-tight mt-6 font-display text-4xl leading-[1.08] font-extrabold tracking-tight text-ink-950 sm:text-5xl">
             Track a case
           </h1>
-          <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-ink-200">
+          <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-ink-500">
             Enter the reference issued when the case was submitted to see its current stage and the
             history of every status change.
           </p>
         </Container>
       </section>
 
-      <section className="bg-[var(--page-muted)] py-16 sm:py-20">
+      <section className="bg-white py-16 sm:py-20">
         <Container size="narrow">
           <Card className="p-6 sm:p-7">
             <Suspense fallback={<Spinner />}>

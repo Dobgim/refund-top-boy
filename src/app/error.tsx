@@ -18,7 +18,7 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <div className="grid min-h-dvh place-items-center bg-[var(--page-muted)] px-6 py-20">
+    <div className="grid min-h-dvh place-items-center bg-white px-6 py-20">
       <div className="w-full max-w-md text-center">
         <span className="mx-auto grid size-16 place-items-center rounded-2xl bg-rose-50 text-rose-600">
           <TriangleAlert aria-hidden className="size-8" />

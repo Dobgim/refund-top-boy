@@ -19,7 +19,7 @@ function ShieldGraphic() {
         {[0, 1, 2].map((ring) => (
           <motion.span
             key={ring}
-            className="absolute rounded-full border border-white/10"
+            className="absolute rounded-full border border-ink-100"
             style={{ width: `${100 - ring * 22}%`, height: `${100 - ring * 22}%` }}
             initial={reduced ? false : { opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -28,11 +28,11 @@ function ShieldGraphic() {
           />
         ))}
         <motion.span
-          className="absolute size-[56%] rounded-full bg-royal-500/12 blur-2xl"
+          className="absolute size-[56%] rounded-full bg-royal-500/6 blur-2xl"
           animate={reduced ? undefined : { opacity: [0.5, 0.9, 0.5], scale: [0.95, 1.05, 0.95] }}
           transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
         />
-        <ShieldCheck className="relative size-16 text-white/15 sm:size-20" />
+        <ShieldCheck className="relative size-16 text-ink-100 sm:size-20" />
       </div>
     </div>
   );
@@ -40,15 +40,12 @@ function ShieldGraphic() {
 
 export function SecuritySection() {
   return (
-    <Section tone="dark" className="overflow-hidden">
-      <div aria-hidden className="pointer-events-none absolute inset-0 aurora" />
-      <div aria-hidden className="pointer-events-none absolute inset-0 star-field opacity-55" />
+    <Section tone="muted" className="overflow-hidden">
       <ShieldGraphic />
 
       <Container className="relative">
         <Reveal>
           <SectionHeading
-            tone="dark"
             eyebrow="Security"
             title="Built With Security At Every Step"
             description="These are the controls the platform actually implements, described in the terms an engineer would use. Nothing here claims a certification we cannot evidence."
@@ -62,22 +59,22 @@ export function SecuritySection() {
               <RevealItem
                 key={feature.title}
                 preset="fadeUp"
-                className="group rounded-card border border-white/10 bg-white/[0.04] p-6 backdrop-blur-sm transition-colors duration-300 hover:border-white/20 hover:bg-white/[0.07]"
+                className="group rounded-card border border-ink-100 bg-white p-6 shadow-soft transition-shadow duration-300 hover:shadow-lift"
               >
-                <span className="grid size-11 place-items-center rounded-xl bg-white/8 text-mint-400 ring-1 ring-white/10 ring-inset transition-transform duration-300 group-hover:scale-110">
+                <span className="grid size-11 place-items-center rounded-xl bg-mint-500/10 text-mint-600 ring-1 ring-mint-500/20 ring-inset transition-transform duration-300 group-hover:scale-110">
                   <Icon aria-hidden className="size-5" />
                 </span>
-                <h3 className="mt-5 font-display text-lg font-bold tracking-tight text-white">
+                <h3 className="mt-5 font-display text-lg font-bold tracking-tight text-ink-950">
                   {feature.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-ink-300">{feature.description}</p>
+                <p className="mt-2 text-sm leading-relaxed text-ink-500">{feature.description}</p>
               </RevealItem>
             );
           })}
         </RevealGroup>
 
         <Reveal delay={0.15} className="mt-8">
-          <p className="mx-auto max-w-3xl rounded-2xl border border-gold-400/25 bg-gold-400/8 px-5 py-4 text-center text-sm text-gold-300">
+          <p className="mx-auto max-w-3xl rounded-2xl border border-gold-400/40 bg-gold-400/10 px-5 py-4 text-center text-sm font-medium text-gold-600">
             RoyalRefund will never ask for a banking password, a card PIN, a one-time code, a seed
             phrase or a private key. If any page ever appears to, close it and report it.
           </p>

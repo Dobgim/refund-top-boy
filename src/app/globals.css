@@ -73,7 +73,7 @@
 :root {
   color-scheme: light;
   --page: #ffffff;
-  --page-muted: #f6f8fd;
+  --page-muted: #ffffff;
 }
 
 * { border-color: color-mix(in oklab, var(--color-ink-200) 70%, transparent); }

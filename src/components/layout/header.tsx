@@ -13,9 +13,6 @@ import { EASE_OUT } from "@/lib/animations/variants";
 import { useMotionSafe } from "@/lib/animations/use-reduced-motion";
 import { cn } from "@/lib/utils";
 
-/** Routes whose hero is dark, so the bar can start transparent over it. */
-const TRANSPARENT_ROUTES = new Set(["/"]);
-
 export function SiteHeader() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
@@ -23,7 +20,9 @@ export function SiteHeader() {
   const { reduced } = useMotionSafe();
   const { scrollY } = useScroll();
 
-  const overHero = TRANSPARENT_ROUTES.has(pathname) && !scrolled && !open;
+  // Every hero is white now, so the bar is always solid: a light-text bar over
+  // a white hero would be invisible. `scrolled` still drives the shadow.
+  const overHero = false;
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setScrolled(latest > 16);
@@ -64,9 +63,10 @@ export function SiteHeader() {
         transition={{ duration: 0.6, ease: EASE_OUT }}
         className={cn(
           "fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,box-shadow,backdrop-filter] duration-300",
-          overHero
-            ? "border-b border-transparent bg-transparent"
-            : "border-b border-ink-100/90 bg-white/85 shadow-[0_1px_0_rgb(8_12_28/0.04)] backdrop-blur-xl supports-[backdrop-filter]:bg-white/70",
+          "border-b bg-white/90 backdrop-blur-xl supports-[backdrop-filter]:bg-white/75",
+          scrolled
+            ? "border-ink-100 shadow-[0_1px_0_rgb(8_12_28/0.05)]"
+            : "border-transparent",
         )}
       >
         <div className="mx-auto flex h-17 w-full max-w-[80rem] items-center gap-4 px-5 sm:px-7 lg:h-19 lg:px-10">

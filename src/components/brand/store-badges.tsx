@@ -39,11 +39,11 @@ export function StoreBadge({ kind }: { kind: "apple" | "play" }) {
       type="button"
       onClick={scrollToTop}
       aria-label={`${label} ${store} — back to the top of the page`}
-      className="inline-flex cursor-pointer items-center gap-3 rounded-2xl border border-white/12 bg-white/[0.06] py-3 pr-6 pl-5 text-white backdrop-blur-sm transition-colors duration-200 hover:border-white/25 hover:bg-white/12 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+      className="inline-flex cursor-pointer items-center gap-3 rounded-2xl border border-ink-200 bg-white py-3 pr-6 pl-5 text-ink-950 shadow-soft transition-colors duration-200 hover:border-royal-300 hover:bg-royal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-royal-600"
     >
       {kind === "apple" ? <AppleGlyph /> : <PlayGlyph />}
       <span className="text-left leading-tight">
-        <span className="block text-[0.68rem] text-ink-300">{label}</span>
+        <span className="block text-[0.68rem] text-ink-400">{label}</span>
         <span className="block font-display text-base font-extrabold tracking-tight">{store}</span>
       </span>
     </button>

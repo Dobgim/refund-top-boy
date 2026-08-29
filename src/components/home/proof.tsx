@@ -17,9 +17,9 @@ function LogoRow({ ariaHidden }: { ariaHidden?: boolean }) {
       {PARTNER_BANKS.map(({ name, Mark }) => (
         <li
           key={name}
-          className="group flex shrink-0 items-center gap-3 text-ink-300 transition-colors duration-300 hover:text-white"
+          className="group flex shrink-0 items-center gap-3 text-ink-400 transition-colors duration-300 hover:text-ink-950"
         >
-          <Mark className="size-7 shrink-0 text-mint-400/70 transition-colors duration-300 group-hover:text-mint-400" />
+          <Mark className="size-7 shrink-0 text-mint-600/70 transition-colors duration-300 group-hover:text-mint-600" />
           <span className="font-display text-lg font-bold tracking-tight whitespace-nowrap">
             {name}
           </span>
@@ -38,12 +38,7 @@ export function ProofSection() {
   const { reduced } = useMotionSafe();
 
   return (
-    <section className="relative isolate overflow-hidden bg-ink-950 py-20 text-white sm:py-24">
-      <div aria-hidden className="pointer-events-none absolute inset-0 aurora" />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/10"
-      />
+    <section className="relative isolate overflow-hidden border-t border-ink-100 bg-white py-20 text-ink-900 sm:py-24">
 
       <Container className="relative">
         <motion.div
@@ -53,16 +48,16 @@ export function ProofSection() {
           transition={{ duration: 0.7, ease: EASE_OUT }}
           className="mx-auto max-w-2xl text-center"
         >
-          <span className="inline-flex items-center gap-2 rounded-full border border-mint-500/25 bg-mint-500/8 px-3.5 py-1.5 text-xs font-semibold tracking-[0.14em] text-mint-400 uppercase">
+          <span className="inline-flex items-center gap-2 rounded-full border border-mint-500/30 bg-mint-500/10 px-3.5 py-1.5 text-xs font-semibold tracking-[0.14em] text-mint-600 uppercase">
             <Landmark aria-hidden className="size-3.5" />
             Proof
           </span>
 
-          <h2 className="text-balance-tight mt-6 font-display text-3xl leading-[1.1] font-extrabold tracking-tight sm:text-4xl lg:text-[2.7rem]">
-            Partnered with <span className="text-mint-400">Europe&rsquo;s Leading Banks</span>
+          <h2 className="text-balance-tight mt-6 font-display text-3xl leading-[1.1] font-extrabold tracking-tight text-ink-950 sm:text-4xl lg:text-[2.7rem]">
+            Partnered with <span className="text-mint-600">Europe&rsquo;s Leading Banks</span>
           </h2>
 
-          <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-ink-300">
+          <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-ink-500">
             We work directly with major financial institutions to expedite refund claims on your
             behalf.
           </p>
@@ -81,8 +76,8 @@ export function ProofSection() {
           <Container>
             <ul className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
               {PARTNER_BANKS.map(({ name, Mark }) => (
-                <li key={name} className="flex items-center gap-3 text-ink-300">
-                  <Mark className="size-7 shrink-0 text-mint-400/70" />
+                <li key={name} className="flex items-center gap-3 text-ink-500">
+                  <Mark className="size-7 shrink-0 text-mint-600/70" />
                   <span className="font-display text-lg font-bold tracking-tight">{name}</span>
                 </li>
               ))}
@@ -98,7 +93,7 @@ export function ProofSection() {
 
       {/* testimonials, on the same dark ground */}
       <Container className="relative mt-20">
-        <TestimonialsCarousel tone="dark" />
+        <TestimonialsCarousel />
       </Container>
     </section>
   );

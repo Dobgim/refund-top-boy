@@ -34,10 +34,12 @@ export function Section({
   tone?: "light" | "muted" | "dark";
   children: ReactNode;
 }) {
+  // Every marketing section sits on white. Sections are separated by a hairline
+  // rule rather than by alternating fills.
   const tones = {
     light: "bg-white text-ink-900",
-    muted: "bg-[var(--page-muted)] text-ink-900",
-    dark: "bg-ink-950 text-white",
+    muted: "bg-white text-ink-900 border-t border-ink-100",
+    dark: "bg-white text-ink-900 border-t border-ink-100",
   };
   return (
     <section
@@ -102,17 +104,17 @@ export function SectionHeading({
         className,
       )}
     >
-      {eyebrow && <Eyebrow tone={tone}>{eyebrow}</Eyebrow>}
+      {eyebrow && <Eyebrow tone="light">{eyebrow}</Eyebrow>}
       <Heading
         className={cn(
           "text-balance-tight font-display text-3xl leading-[1.12] font-extrabold tracking-tight sm:text-4xl lg:text-[2.7rem]",
-          tone === "dark" ? "text-white" : "text-ink-950",
+          "text-ink-950",
         )}
       >
         {title}
       </Heading>
       {description && (
-        <p className={cn("max-w-2xl text-base leading-relaxed sm:text-lg", tone === "dark" ? "text-ink-200" : "text-ink-500")}>
+        <p className="max-w-2xl text-base leading-relaxed text-ink-500 sm:text-lg">
           {description}
         </p>
       )}

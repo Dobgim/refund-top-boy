@@ -68,7 +68,7 @@ export function SolutionSection() {
           stagger={0.1}
           delay={0.1}
           as="ul"
-          className="mt-6 grid gap-4 rounded-card border border-ink-100 bg-[var(--page-muted)] p-6 sm:grid-cols-3 sm:p-8"
+          className="mt-6 grid gap-4 rounded-card border border-ink-100 bg-white p-6 shadow-soft sm:grid-cols-3 sm:p-8"
         >
           {BENEFITS.map((benefit) => {
             const Icon = BENEFIT_ICONS[benefit.icon] ?? FileUp;

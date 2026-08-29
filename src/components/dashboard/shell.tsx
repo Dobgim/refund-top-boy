@@ -200,7 +200,7 @@ export function DashboardShell({
   );
 
   return (
-    <div className="min-h-dvh bg-[var(--page-muted)] lg:grid lg:grid-cols-[17.5rem_minmax(0,1fr)]">
+    <div className="min-h-dvh bg-white lg:grid lg:grid-cols-[17.5rem_minmax(0,1fr)]">
       {/* desktop sidebar */}
       <aside className="sticky top-0 hidden h-dvh border-r border-ink-100 bg-white lg:block">
         {sidebar()}

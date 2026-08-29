@@ -12,46 +12,44 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className="grid min-h-dvh lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
       {/* brand panel */}
-      <aside className="relative hidden overflow-hidden bg-ink-950 p-12 text-white lg:flex lg:flex-col">
-        <div aria-hidden className="pointer-events-none absolute inset-0 aurora" />
-        <div aria-hidden className="pointer-events-none absolute inset-0 star-field opacity-60" />
+      <aside className="relative hidden overflow-hidden border-r border-ink-100 bg-white p-12 text-ink-900 lg:flex lg:flex-col">
         <div
           aria-hidden
-          className="pointer-events-none absolute -top-32 -left-24 size-[34rem] rounded-full bg-royal-600/25 blur-[120px]"
+          className="pointer-events-none absolute -top-32 -left-24 size-[34rem] rounded-full bg-royal-600/6 blur-[120px]"
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute -right-28 -bottom-32 size-[28rem] rounded-full bg-mint-500/12 blur-[120px]"
+          className="pointer-events-none absolute -right-28 -bottom-32 size-[28rem] rounded-full bg-mint-500/5 blur-[120px]"
         />
 
         <div className="relative">
-          <Logo tone="light" />
+          <Logo />
         </div>
 
         <div className="relative mt-auto max-w-md">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-3.5 py-1.5 text-xs font-semibold text-ink-200">
-            <ShieldCheck aria-hidden className="size-3.5 text-mint-400" />
+          <span className="inline-flex items-center gap-2 rounded-full border border-ink-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-ink-600">
+            <ShieldCheck aria-hidden className="size-3.5 text-mint-600" />
             Secure case portal
           </span>
-          <h2 className="text-balance-tight mt-6 font-display text-[2.4rem] leading-[1.08] font-extrabold tracking-tight">
+          <h2 className="text-balance-tight mt-6 font-display text-[2.4rem] leading-[1.08] font-extrabold tracking-tight text-ink-950">
             One record. Every stage. No guesswork.
           </h2>
-          <p className="mt-5 text-sm leading-relaxed text-ink-300">
+          <p className="mt-5 text-sm leading-relaxed text-ink-500">
             Your account is the single place your refund case lives: the evidence you uploaded, the
             questions a reviewer asked, and the exact stage it is at right now.
           </p>
 
           <ul className="mt-8 space-y-3.5">
             {ASSURANCES.map((line) => (
-              <li key={line} className="flex items-start gap-3 text-sm text-ink-200">
-                <CheckCircle2 aria-hidden className="mt-0.5 size-4.5 shrink-0 text-mint-400" />
+              <li key={line} className="flex items-start gap-3 text-sm text-ink-600">
+                <CheckCircle2 aria-hidden className="mt-0.5 size-4.5 shrink-0 text-mint-600" />
                 {line}
               </li>
             ))}
           </ul>
         </div>
 
-        <p className="relative mt-10 text-xs text-ink-500">
+        <p className="relative mt-10 text-xs text-ink-400">
           RoyalRefund manages refund and dispute cases. We are not a bank and never hold your funds.
         </p>
       </aside>

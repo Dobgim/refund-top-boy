@@ -14,18 +14,18 @@ export function AppDownloadSection() {
   const { reduced } = useMotionSafe();
 
   return (
-    <section className="relative isolate overflow-hidden bg-royal-950 py-20 text-white sm:py-24 lg:py-28">
+    <section className="relative isolate overflow-hidden border-t border-ink-100 bg-white py-20 text-ink-900 sm:py-24 lg:py-28">
       <div
         aria-hidden
-        className="pointer-events-none absolute top-1/2 left-[24%] size-[38rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-royal-500/30 blur-[130px]"
+        className="pointer-events-none absolute top-1/2 left-[24%] size-[38rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-royal-500/8 blur-[130px]"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-28 -bottom-28 size-[32rem] rounded-full bg-fuchsia-600/18 blur-[140px]"
+        className="pointer-events-none absolute -right-28 -bottom-28 size-[32rem] rounded-full bg-royal-600/5 blur-[140px]"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/10"
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-transparent"
       />
 
       <Container className="relative">
@@ -41,10 +41,10 @@ export function AppDownloadSection() {
             {/* glow disc behind the frame */}
             <div
               aria-hidden
-              className="absolute -inset-6 rounded-[3.5rem] bg-royal-600/20 blur-[80px]"
+              className="absolute -inset-6 rounded-[3.5rem] bg-royal-600/10 blur-[80px]"
             />
 
-            <div className="relative overflow-hidden rounded-[2.5rem] ring-1 ring-white/15">
+            <div className="relative overflow-hidden rounded-[2.5rem] shadow-lift ring-1 ring-ink-100">
               <Image
                 src={portrait}
                 alt="A customer holding up their payment card while reviewing a refund case on a laptop"
@@ -56,11 +56,11 @@ export function AppDownloadSection() {
               {/* tint the photo into the section palette */}
               <div
                 aria-hidden
-                className="pointer-events-none absolute inset-0 bg-ink-950/25"
+                className="pointer-events-none absolute inset-0 bg-transparent"
               />
               <div
                 aria-hidden
-                className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,rgb(28_26_78/0.55),transparent_55%)]"
+                className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,rgb(8_12_28/0.18),transparent_45%)]"
               />
             </div>
 
@@ -71,12 +71,12 @@ export function AppDownloadSection() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.55, delay: 0.45, ease: EASE_OUT }}
-                className="flex items-center gap-2.5 rounded-2xl border border-white/15 bg-white/10 px-3.5 py-2.5 backdrop-blur-md"
+                className="flex items-center gap-2.5 rounded-2xl border border-ink-100 bg-white px-3.5 py-2.5 shadow-lift"
               >
-                <span className="grid size-8 place-items-center rounded-lg bg-mint-500/25 text-mint-300">
+                <span className="grid size-8 place-items-center rounded-lg bg-mint-500/12 text-mint-600">
                   <ShieldCheck aria-hidden className="size-4" />
                 </span>
-                <span className="text-xs font-bold">Case secured</span>
+                <span className="text-xs font-bold text-ink-950">Case secured</span>
               </motion.div>
             </Floating>
 
@@ -108,11 +108,11 @@ export function AppDownloadSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.4 }}
               transition={{ duration: 0.75, ease: EASE_OUT }}
-              className="text-balance-tight font-display text-[2.3rem] leading-[1.08] font-extrabold tracking-[-0.03em] sm:text-[2.9rem] lg:text-[3.3rem]"
+              className="text-balance-tight font-display text-[2.3rem] leading-[1.08] font-extrabold tracking-[-0.03em] text-ink-950 sm:text-[2.9rem] lg:text-[3.3rem]"
             >
               RoyalRefund Is The Fastest
               <br className="hidden sm:block" /> Way To{" "}
-              <span className="text-royal-300">
+              <span className="text-royal-600">
                 Recover Your Money
               </span>
             </motion.h2>
@@ -122,7 +122,7 @@ export function AppDownloadSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.4 }}
               transition={{ duration: 0.75, delay: 0.1, ease: EASE_OUT }}
-              className="mt-6 max-w-xl text-base leading-relaxed text-ink-200"
+              className="mt-6 max-w-xl text-base leading-relaxed text-ink-500"
             >
               Manage your cases wherever you are. Upload a receipt from your camera roll, answer a
               reviewer between meetings, and get a notification the moment your status changes.
@@ -135,7 +135,7 @@ export function AppDownloadSection() {
               transition={{ duration: 0.75, delay: 0.18, ease: EASE_OUT }}
               className="mt-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-6"
             >
-              <p className="font-display text-sm font-extrabold tracking-[0.14em] whitespace-nowrap text-white uppercase">
+              <p className="font-display text-sm font-extrabold tracking-[0.14em] whitespace-nowrap text-ink-950 uppercase">
                 Download the app
               </p>
               <div className="flex flex-wrap gap-3">
