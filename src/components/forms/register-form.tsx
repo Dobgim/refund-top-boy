@@ -15,7 +15,7 @@ import { registerSchema, type RegisterValues } from "@/lib/validations/auth";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { COUNTRIES } from "@/lib/data/countries";
-import { SITE } from "@/lib/site";
+import { appOrigin } from "@/lib/site";
 
 export function RegisterForm() {
   const router = useRouter();
@@ -54,7 +54,7 @@ export function RegisterForm() {
       options: {
         // Stored on the auth user and copied into `profiles` by a database trigger.
         data: { full_name: values.fullName, country: values.country },
-        emailRedirectTo: `${SITE.url}/auth/callback?next=/dashboard`,
+        emailRedirectTo: `${appOrigin()}/auth/callback?next=/dashboard`,
       },
     });
 

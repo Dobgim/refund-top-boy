@@ -18,7 +18,7 @@ import {
 } from "@/lib/validations/auth";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
-import { SITE } from "@/lib/site";
+import { appOrigin } from "@/lib/site";
 
 export function ForgotPasswordForm() {
   const [sent, setSent] = useState(false);
@@ -43,7 +43,7 @@ export function ForgotPasswordForm() {
     }
 
     const { error } = await supabase.auth.resetPasswordForEmail(values.email, {
-      redirectTo: `${SITE.url}/auth/callback?next=/reset-password`,
+      redirectTo: `${appOrigin()}/auth/callback?next=/reset-password`,
     });
 
     // Deliberately generic: the response must not reveal whether an account exists.

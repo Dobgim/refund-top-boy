@@ -52,6 +52,20 @@ export const SITE = {
   locale: "en_US",
 } as const;
 
+/**
+ * The origin to build auth redirect links from.
+ *
+ * In the browser this is always the real origin the user is on, which keeps
+ * confirmation and password-reset links correct on production, on preview
+ * deployments, and on localhost without any configuration. Only NEXT_PUBLIC_*
+ * variables reach client bundles, so relying on SITE.url alone would silently
+ * send production users to localhost.
+ */
+export function appOrigin(): string {
+  if (typeof window !== "undefined") return window.location.origin;
+  return SITE.url;
+}
+
 export const PRIMARY_NAV = [
   { label: "Home", href: "/" },
   { label: "How It Works", href: "/how-it-works" },
