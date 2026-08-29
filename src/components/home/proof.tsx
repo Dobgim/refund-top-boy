@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Landmark } from "lucide-react";
 import { Container } from "@/components/ui/primitives";
 import { PARTNER_BANKS } from "@/components/brand/bank-logos";
+import { TestimonialsCarousel } from "@/components/home/testimonials";
 import { useMotionSafe } from "@/lib/animations/use-reduced-motion";
 import { EASE_OUT } from "@/lib/animations/variants";
 
@@ -28,15 +29,17 @@ function LogoRow({ ariaHidden }: { ariaHidden?: boolean }) {
   );
 }
 
-export function PartnersSection() {
+/**
+ * Proof: who we work with, then what people say. Previously two separate
+ * full-height sections; merged so the page answers "can I trust this?" in one
+ * scroll rather than two.
+ */
+export function ProofSection() {
   const { reduced } = useMotionSafe();
 
   return (
-    <section className="relative isolate overflow-hidden bg-ink-950 py-16 text-white sm:py-20">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-24 left-1/2 size-[34rem] -translate-x-1/2 rounded-full bg-mint-500/10 blur-[130px]"
-      />
+    <section className="relative isolate overflow-hidden bg-ink-950 py-20 text-white sm:py-24">
+      <div aria-hidden className="pointer-events-none absolute inset-0 aurora" />
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/10"
@@ -52,14 +55,11 @@ export function PartnersSection() {
         >
           <span className="inline-flex items-center gap-2 rounded-full border border-mint-500/25 bg-mint-500/8 px-3.5 py-1.5 text-xs font-semibold tracking-[0.14em] text-mint-400 uppercase">
             <Landmark aria-hidden className="size-3.5" />
-            Banking network
+            Proof
           </span>
 
           <h2 className="text-balance-tight mt-6 font-display text-3xl leading-[1.1] font-extrabold tracking-tight sm:text-4xl lg:text-[2.7rem]">
-            Partnered with{" "}
-            <span className="text-mint-400">
-              Europe&rsquo;s Leading Banks
-            </span>
+            Partnered with <span className="text-mint-400">Europe&rsquo;s Leading Banks</span>
           </h2>
 
           <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-ink-300">
@@ -69,16 +69,15 @@ export function PartnersSection() {
         </motion.div>
       </Container>
 
-      {/* logo marquee — full bleed, fading at both edges */}
+      {/* bank marquee */}
       <motion.div
         initial={reduced ? false : { opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8, delay: 0.15, ease: EASE_OUT }}
-        className="relative mt-14 [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]"
+        className="relative mt-12 [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]"
       >
         {reduced ? (
-          // No motion: a plain wrapping grid, everything visible at once.
           <Container>
             <ul className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
               {PARTNER_BANKS.map(({ name, Mark }) => (
@@ -92,11 +91,15 @@ export function PartnersSection() {
         ) : (
           <div className="group flex w-max animate-[marquee_46s_linear_infinite] hover:[animation-play-state:paused]">
             <LogoRow />
-            {/* duplicate purely for the seamless loop, hidden from assistive tech */}
             <LogoRow ariaHidden />
           </div>
         )}
       </motion.div>
+
+      {/* testimonials, on the same dark ground */}
+      <Container className="relative mt-20">
+        <TestimonialsCarousel tone="dark" />
+      </Container>
     </section>
   );
 }

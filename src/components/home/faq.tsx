@@ -2,9 +2,9 @@
 
 import { useId, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { HelpCircle, LifeBuoy, MessageSquareText, Plus } from "lucide-react";
+import Link from "next/link";
+import { Plus } from "lucide-react";
 import { Container, Section, SectionHeading } from "@/components/ui/primitives";
-import { ButtonLink } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/motion";
 import { FAQS } from "@/lib/data/content";
 import { useMotionSafe } from "@/lib/animations/use-reduced-motion";
@@ -84,57 +84,28 @@ export function FaqAccordion({
 export function FaqSection() {
   return (
     <Section id="faq" tone="muted">
-      <Container>
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-16">
-          <div>
-            <Reveal preset="fadeRight">
-              <SectionHeading
-                align="left"
-                eyebrow="Questions"
-                title="Answers before you start"
-                description="The things people ask most often about submitting and following a case."
-              />
-            </Reveal>
+      <Container size="narrow">
+        <Reveal>
+          <SectionHeading
+            eyebrow="Questions"
+            title="Answers before you start"
+            description="The things people ask most often about submitting and following a case."
+          />
+        </Reveal>
 
-            <Reveal preset="fadeUp" delay={0.15} className="mt-9">
-              <div className="relative overflow-hidden rounded-card border border-ink-100 bg-white p-6 shadow-soft">
-                <div
-                  aria-hidden
-                  className="pointer-events-none absolute -top-16 -right-12 size-40 rounded-full bg-royal-500/10 blur-2xl"
-                />
-                <span className="relative grid size-12 place-items-center rounded-2xl bg-ink-950 text-gold-300">
-                  <LifeBuoy aria-hidden className="size-6" />
-                </span>
-                <p className="relative mt-5 font-bold text-ink-950">Still unsure about something?</p>
-                <p className="relative mt-2 text-sm leading-relaxed text-ink-500">
-                  Send a question through the contact form. If it turns out to be a common one, it
-                  usually ends up on this page.
-                </p>
-                <div className="relative mt-5 flex flex-wrap gap-2">
-                  <ButtonLink
-                    href="/contact"
-                    size="sm"
-                    leadingIcon={<MessageSquareText aria-hidden className="size-4" />}
-                  >
-                    Contact support
-                  </ButtonLink>
-                  <ButtonLink
-                    href="/faq"
-                    size="sm"
-                    variant="outline"
-                    leadingIcon={<HelpCircle aria-hidden className="size-4" />}
-                  >
-                    Full help center
-                  </ButtonLink>
-                </div>
-              </div>
-            </Reveal>
-          </div>
+        <Reveal preset="fadeUp" delay={0.1} className="mt-12">
+          <FaqAccordion />
+        </Reveal>
 
-          <Reveal preset="fadeLeft" delay={0.1}>
-            <FaqAccordion />
-          </Reveal>
-        </div>
+        <Reveal delay={0.2} className="mt-8">
+          <p className="text-center text-sm text-ink-500">
+            Something not covered here?{" "}
+            <Link href="/contact" className="font-semibold text-royal-600 hover:text-royal-800">
+              Ask us directly
+            </Link>
+            .
+          </p>
+        </Reveal>
       </Container>
     </Section>
   );

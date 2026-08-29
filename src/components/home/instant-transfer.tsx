@@ -1,9 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Check, Send, ShieldCheck } from "lucide-react";
+import { Check, Send, ShieldCheck } from "lucide-react";
 import { Container } from "@/components/ui/primitives";
-import { ButtonLink } from "@/components/ui/button";
 import { Floating } from "@/components/ui/motion";
 import { FlagAU, FlagUS } from "@/components/brand/flags";
 import { LogoMark } from "@/components/brand/logo";
@@ -176,21 +175,6 @@ export function InstantTransferSection() {
               </Floating>
             </motion.div>
 
-            <motion.div
-              initial={reduced ? false : { opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.5 }}
-              transition={{ duration: 0.6, delay: 0.25, ease: EASE_OUT }}
-              className="mt-9"
-            >
-              <ButtonLink
-                href="/register"
-                size="lg"
-                trailingIcon={<ArrowRight aria-hidden className="size-4.5" />}
-              >
-                Open your account
-              </ButtonLink>
-            </motion.div>
           </div>
 
           {/* --------------------------------------------------------- right */}

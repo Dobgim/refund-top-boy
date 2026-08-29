@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
 import { Hero } from "@/components/home/hero";
-import { PartnersSection } from "@/components/home/partners";
-import { ServicesSection } from "@/components/home/services";
-import { RecoveryControlSection } from "@/components/home/recovery-control";
+import { ProblemSection } from "@/components/home/problem";
+import { SolutionSection } from "@/components/home/solution";
+import { ProofSection } from "@/components/home/proof";
 import { HowItWorksSection } from "@/components/home/how-it-works";
-import { MobileShowcaseSection } from "@/components/home/mobile-showcase";
 import { InstantTransferSection } from "@/components/home/instant-transfer";
 import { AppDownloadSection } from "@/components/home/app-download";
 import { SecuritySection } from "@/components/home/security";
-import { TestimonialsSection } from "@/components/home/testimonials";
 import { FaqSection } from "@/components/home/faq";
 import { CtaSection } from "@/components/home/cta";
 import { FAQS } from "@/lib/data/content";
@@ -49,16 +47,14 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Hero />
-      <PartnersSection />
-      <ServicesSection />
-      <RecoveryControlSection />
+      <ProblemSection />
+      <SolutionSection />
       <HowItWorksSection />
-      <MobileShowcaseSection />
-      <AppDownloadSection />
       <InstantTransferSection />
+      <ProofSection />
       <SecuritySection />
-      <TestimonialsSection />
       <FaqSection />
+      <AppDownloadSection />
       <CtaSection />
     </>
   );

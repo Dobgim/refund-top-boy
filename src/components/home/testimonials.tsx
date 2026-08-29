@@ -63,7 +63,8 @@ function usePerView() {
   return perView;
 }
 
-export function TestimonialsSection() {
+export function TestimonialsCarousel({ tone = "light" }: { tone?: "light" | "dark" }) {
+  const dark = tone === "dark";
   const { reduced } = useMotionSafe();
   const perView = usePerView();
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -101,12 +102,13 @@ export function TestimonialsSection() {
   }, [paused, reduced, maxIndex]);
 
   return (
-    <Section tone="light">
-      <Container>
+    <>
+      <div>
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <Reveal className="max-w-2xl">
             <SectionHeading
               align="left"
+              tone={tone}
               eyebrow="Feedback"
               title="What a good recovery experience sounds like"
               description="A few words from people whose cases have closed."
@@ -119,7 +121,12 @@ export function TestimonialsSection() {
               onClick={() => go(index - 1)}
               disabled={maxIndex === 0}
               aria-label="Previous testimonials"
-              className="grid size-11 place-items-center rounded-full border border-ink-200 bg-white text-ink-700 transition-colors hover:border-royal-300 hover:bg-royal-50 hover:text-royal-700 disabled:opacity-40"
+              className={cn(
+                "grid size-11 place-items-center rounded-full border transition-colors disabled:opacity-40",
+                dark
+                  ? "border-white/15 bg-white/5 text-white hover:bg-white/12"
+                  : "border-ink-200 bg-white text-ink-700 hover:border-royal-300 hover:bg-royal-50 hover:text-royal-700",
+              )}
             >
               <ChevronLeft aria-hidden className="size-5" />
             </button>
@@ -128,7 +135,12 @@ export function TestimonialsSection() {
               onClick={() => go(index + 1)}
               disabled={maxIndex === 0}
               aria-label="Next testimonials"
-              className="grid size-11 place-items-center rounded-full border border-ink-200 bg-white text-ink-700 transition-colors hover:border-royal-300 hover:bg-royal-50 hover:text-royal-700 disabled:opacity-40"
+              className={cn(
+                "grid size-11 place-items-center rounded-full border transition-colors disabled:opacity-40",
+                dark
+                  ? "border-white/15 bg-white/5 text-white hover:bg-white/12"
+                  : "border-ink-200 bg-white text-ink-700 hover:border-royal-300 hover:bg-royal-50 hover:text-royal-700",
+              )}
             >
               <ChevronRight aria-hidden className="size-5" />
             </button>
@@ -164,15 +176,22 @@ export function TestimonialsSection() {
                   className="w-full shrink-0 px-2.5 first:pl-0 last:pr-0 sm:w-1/2 lg:w-1/3"
                   style={{ width: slideWidth ? `${slideWidth}px` : undefined }}
                 >
-                  <figure className="flex h-full flex-col rounded-card border border-ink-100 bg-white p-6 shadow-soft">
-                    <Quote aria-hidden className="size-7 text-royal-200" />
-                    <blockquote className="mt-4 flex-1 text-sm leading-relaxed text-ink-700">
+                  <figure
+                    className={cn(
+                      "flex h-full flex-col rounded-card border p-6",
+                      dark
+                        ? "border-white/10 bg-white/[0.04] backdrop-blur-sm"
+                        : "border-ink-100 bg-white shadow-soft",
+                    )}
+                  >
+                    <Quote aria-hidden className={cn("size-7", dark ? "text-royal-400/60" : "text-royal-200")} />
+                    <blockquote className={cn("mt-4 flex-1 text-sm leading-relaxed", dark ? "text-ink-200" : "text-ink-700")}>
                       {item.quote}
                     </blockquote>
-                    <figcaption className="mt-6 flex items-center gap-3 border-t border-ink-100 pt-5">
+                    <figcaption className={cn("mt-6 flex items-center gap-3 border-t pt-5", dark ? "border-white/10" : "border-ink-100")}>
                       <Avatar name={item.name} accent={item.accent as keyof typeof ACCENTS} />
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate font-bold text-ink-950">{item.name}</span>
+                        <span className={cn("block truncate font-bold", dark ? "text-white" : "text-ink-950")}>{item.name}</span>
                         <span className="block truncate text-xs text-ink-400">{item.role}</span>
                       </span>
                       <Rating value={item.rating} />
@@ -193,12 +212,25 @@ export function TestimonialsSection() {
                 aria-current={dot === index ? "true" : undefined}
                 className={cn(
                   "h-2 rounded-full transition-all duration-300",
-                  dot === index ? "w-7 bg-royal-600" : "w-2 bg-ink-200 hover:bg-ink-300",
+                  dot === index
+                    ? dark ? "w-7 bg-mint-400" : "w-7 bg-royal-600"
+                    : dark ? "w-2 bg-white/25 hover:bg-white/40" : "w-2 bg-ink-200 hover:bg-ink-300",
                 )}
               />
             ))}
           </div>
         </div>
+      </div>
+    </>
+  );
+}
+
+/** Standalone light-background variant, for pages other than the homepage. */
+export function TestimonialsSection() {
+  return (
+    <Section tone="light">
+      <Container>
+        <TestimonialsCarousel />
       </Container>
     </Section>
   );
