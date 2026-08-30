@@ -20,12 +20,9 @@ import {
   ALLOWED_ID_LABEL,
   ALLOWED_ID_TYPES,
   ID_BUCKET,
-  ID_DOCUMENT_LABELS,
-  ID_DOCUMENT_TYPES,
-  needsBackSide,
   validateIdFile,
-  type IdDocumentType,
 } from "@/lib/verification";
+import { documentsForCountry, findSpec, specKey } from "@/lib/id-documents";
 import { formatBytes, safeFileName, cn } from "@/lib/utils";
 
 interface Side {
@@ -118,13 +115,17 @@ function SidePicker({
 
 export function VerificationForm({
   defaultName,
+  country,
   resubmitting,
 }: {
   defaultName: string;
+  /** Taken from the profile, so the list only offers documents that exist there. */
+  country: string | null;
   resubmitting?: boolean;
 }) {
   const router = useRouter();
-  const [documentType, setDocumentType] = useState<IdDocumentType>("national_id");
+  const available = documentsForCountry(country);
+  const [selected, setSelected] = useState(() => specKey(available[0]));
   const [fullName, setFullName] = useState(defaultName);
   const [documentNumber, setDocumentNumber] = useState("");
   const [front, setFront] = useState<Side | null>(null);
@@ -132,7 +133,9 @@ export function VerificationForm({
   const [error, setError] = useState<string | null>(null);
   const [phase, setPhase] = useState<"idle" | "uploading" | "saving">("idle");
 
-  const wantsBack = needsBackSide(documentType);
+  const spec = findSpec(country, selected) ?? available[0];
+  // The number of images asked for follows from the document itself.
+  const wantsBack = spec.sides === 2;
   const busy = phase !== "idle";
 
   function pick(setter: (s: Side | null) => void, sideLabel: string) {
@@ -184,7 +187,8 @@ export function VerificationForm({
 
       setPhase("saving");
       const result = await submitVerification({
-        documentType,
+        documentType: spec.type,
+        documentLabel: spec.label,
         fullName: fullName.trim(),
         documentNumber: documentNumber.trim(),
         frontPath,
@@ -211,19 +215,30 @@ export function VerificationForm({
       </Alert>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="Document type" htmlFor="doc-type" required>
+        <Field
+          label="Document type"
+          htmlFor="doc-type"
+          hint={
+            country
+              ? `Documents issued in ${country}.`
+              : "Set your country in profile settings for a country-specific list."
+          }
+          required
+        >
           <Select
             id="doc-type"
-            value={documentType}
+            value={selected}
             disabled={busy}
             onChange={(event) => {
-              setDocumentType(event.target.value as IdDocumentType);
+              setSelected(event.target.value);
+              // A passport needs one image, a card needs two: drop anything
+              // already picked for a side the new document does not have.
               setBack(null);
             }}
           >
-            {ID_DOCUMENT_TYPES.map((type) => (
-              <option key={type} value={type}>
-                {ID_DOCUMENT_LABELS[type]}
+            {available.map((option) => (
+              <option key={specKey(option)} value={specKey(option)}>
+                {option.label}
               </option>
             ))}
           </Select>
@@ -260,12 +275,8 @@ export function VerificationForm({
 
       <div className={cn("grid gap-5", wantsBack && "sm:grid-cols-2")}>
         <SidePicker
-          label="Front of document"
-          hint={
-            documentType === "passport"
-              ? "The photo page, showing the machine-readable lines."
-              : "The side carrying your photo."
-          }
+          label={wantsBack ? "Front of document" : "Photo page"}
+          hint={spec.hint ?? "The side carrying your photo."}
           side={front}
           onPick={pick(setFront, "front")}
           onClear={() => setFront(null)}
@@ -284,12 +295,12 @@ export function VerificationForm({
         )}
       </div>
 
-      {!wantsBack && (
-        <p className="flex items-start gap-2 text-sm text-ink-500">
-          <IdCard aria-hidden className="mt-0.5 size-4 shrink-0 text-ink-300" />
-          A passport only needs its photo page, so no second image is required.
-        </p>
-      )}
+      <p className="flex items-start gap-2 text-sm text-ink-500">
+        <IdCard aria-hidden className="mt-0.5 size-4 shrink-0 text-ink-300" />
+        {wantsBack
+          ? `A ${spec.label.toLowerCase()} is a card, so both sides are needed.`
+          : `A ${spec.label.toLowerCase()} carries everything on one page, so a single image is enough.`}
+      </p>
 
       <div className="flex flex-col gap-3 border-t border-ink-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
         <p className="flex items-start gap-2 text-xs leading-relaxed text-ink-400 sm:max-w-sm">

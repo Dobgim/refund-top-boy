@@ -642,3 +642,78 @@ export async function getAllVerifications(): Promise<DataResult<VerificationRow[
 
   return { data: rows, demo: false };
 }
+
+/* ------------------------------------------------------------------ banking */
+
+export interface BankAccount {
+  id: string;
+  account_number: string;
+  currency: string;
+  balance: number;
+  status: string;
+  created_at: string;
+}
+
+export interface BankTransaction {
+  id: string;
+  type: string;
+  amount: number;
+  balance_after: number;
+  counterparty: string | null;
+  reference: string;
+  description: string | null;
+  created_at: string;
+}
+
+export async function getMyAccount(): Promise<BankAccount | null> {
+  const supabase = await getSupabaseServerClient();
+  if (!supabase) return null;
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const { data } = await supabase
+    .from("bank_accounts")
+    .select("id, account_number, currency, balance, status, created_at")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (!data) return null;
+  const row = data as BankAccount;
+  return { ...row, balance: Number(row.balance) };
+}
+
+export async function getMyTransactions(limit = 50): Promise<BankTransaction[]> {
+  const supabase = await getSupabaseServerClient();
+  if (!supabase) return [];
+
+  const { data } = await supabase
+    .from("bank_transactions")
+    .select("id, type, amount, balance_after, counterparty, reference, description, created_at")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  return ((data as BankTransaction[]) ?? []).map((row) => ({
+    ...row,
+    amount: Number(row.amount),
+    balance_after: Number(row.balance_after),
+  }));
+}
+
+/** One generic reader for the four product tables, all shaped the same way. */
+export async function getMyBankingRecords<T>(
+  table: "withdrawal_requests" | "savings_schemes" | "fixed_deposits" | "loans" | "bill_payments",
+): Promise<T[]> {
+  const supabase = await getSupabaseServerClient();
+  if (!supabase) return [];
+
+  const { data } = await supabase
+    .from(table)
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(100);
+
+  return (data as T[]) ?? [];
+}

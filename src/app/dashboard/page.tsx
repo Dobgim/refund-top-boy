@@ -13,14 +13,19 @@ import { ButtonLink } from "@/components/ui/button";
 import { Card, EmptyState, StatusBadge } from "@/components/ui/primitives";
 import { PageHeader, StatCard, StageTracker } from "@/components/dashboard/common";
 import { PayoutWallet } from "@/components/dashboard/payout-wallet";
+import { AccountCard } from "@/components/dashboard/account-card";
 import { VerificationBanner } from "@/components/dashboard/verification-banner";
-import { getMyClaims } from "@/lib/queries";
+import { getMyClaims, getMyAccount } from "@/lib/queries";
 import { getCurrentProfile } from "@/lib/supabase/server";
 import { CLAIM_TYPE_LABELS } from "@/lib/claims";
 import { formatCurrency, formatDate, relativeTime } from "@/lib/utils";
 
 export default async function DashboardOverviewPage() {
-  const [profile, { data: claims }] = await Promise.all([getCurrentProfile(), getMyClaims()]);
+  const [profile, { data: claims }, account] = await Promise.all([
+    getCurrentProfile(),
+    getMyClaims(),
+    getMyAccount(),
+  ]);
 
   const active = claims.filter((claim) =>
     ["submitted", "under_review", "documents_required", "approved"].includes(claim.status),
@@ -47,6 +52,9 @@ export default async function DashboardOverviewPage() {
       />
 
       <VerificationBanner status={profile?.verification_status ?? "unverified"} />
+
+      {/* the account, immediately under the verification bar */}
+      <AccountCard account={account} holder={profile?.full_name ?? "Your account"} />
 
       {/* account status */}
       <Card className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">

@@ -4,10 +4,12 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { getAdminAccess } from "@/lib/supabase/authz";
-import { ID_DOCUMENT_TYPES, needsBackSide, type IdDocumentType } from "@/lib/verification";
+import { ID_DOCUMENT_TYPES, type IdDocumentType } from "@/lib/verification";
 
 const submitSchema = z.object({
   documentType: z.enum(ID_DOCUMENT_TYPES as unknown as [IdDocumentType, ...IdDocumentType[]]),
+  /** What the document is called where it was issued, e.g. "Ghana Card". */
+  documentLabel: z.string().trim().max(80).optional().or(z.literal("")),
   fullName: z
     .string()
     .trim()
@@ -33,9 +35,6 @@ export async function submitVerification(raw: unknown) {
   }
 
   const v = parsed.data;
-  if (needsBackSide(v.documentType) && !v.backPath) {
-    return { ok: false, message: "This document type needs both the front and the back." };
-  }
 
   const supabase = await getSupabaseServerClient();
   if (!supabase) return { ok: false, message: "Verification is unavailable on this deployment." };
@@ -49,6 +48,7 @@ export async function submitVerification(raw: unknown) {
     {
       user_id: user.id,
       document_type: v.documentType,
+      document_label: v.documentLabel || null,
       full_name: v.fullName,
       document_number: v.documentNumber || null,
       front_path: v.frontPath,

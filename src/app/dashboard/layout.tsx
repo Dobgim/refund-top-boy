@@ -19,6 +19,13 @@ const NAV: NavItem[] = [
   { label: "Start a Claim", href: "/dashboard/claims/new", icon: "newClaim" },
   { label: "Verification", href: "/dashboard/verification", icon: "verify" },
   { label: "Settings", href: "/dashboard/settings", icon: "settings" },
+  { label: "Fund Transfer", href: "/dashboard/transfer", icon: "transfer" },
+  { label: "Withdraw", href: "/dashboard/withdraw", icon: "withdraw" },
+  { label: "Pay Bill", href: "/dashboard/pay-bill", icon: "bill" },
+  { label: "DPS", href: "/dashboard/savings", icon: "savings" },
+  { label: "FDR", href: "/dashboard/deposits", icon: "deposit" },
+  { label: "Loan", href: "/dashboard/loans", icon: "loan" },
+  { label: "Transactions", href: "/dashboard/transactions", icon: "transactions" },
   { label: "Track a Case", href: "/track", icon: "track" },
   { label: "Help Center", href: "/faq", icon: "help" },
 ];

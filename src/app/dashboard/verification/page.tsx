@@ -121,6 +121,7 @@ export default async function VerificationCenterPage() {
               )}
               <VerificationForm
                 defaultName={profile?.full_name ?? ""}
+                country={profile?.country ?? null}
                 resubmitting={status === "rejected"}
               />
             </>
