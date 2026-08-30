@@ -74,8 +74,8 @@ export function ForgotPasswordForm() {
           subtitle={`If an account exists for ${getValues("email")}, a reset link is on its way. The link expires after a short window.`}
         />
         <Alert tone="info" className="mb-6">
-          Nothing arrived? Check the spam folder, then try again in a few minutes. If email is not
-          yet configured on this deployment, contact support and a reviewer will reset it for you.
+          Nothing arrived? Check the spam folder first, then wait a few minutes before trying again
+          — repeated requests in quick succession are rate limited and will not send.
         </Alert>
         <Button
           variant="outline"

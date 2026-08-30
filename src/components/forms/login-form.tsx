@@ -76,7 +76,14 @@ export function LoginForm() {
 
       {notice === "registered" && (
         <Alert tone="success" title="Account created" className="mb-6">
-          Check your inbox for the confirmation link, then sign in.
+          Check your inbox for the confirmation link, then sign in. If it has not arrived in a
+          couple of minutes, look in your spam folder.
+        </Alert>
+      )}
+      {notice === "link-invalid" && (
+        <Alert tone="warning" title="That link did not work" className="mb-6">
+          Confirmation and reset links can only be used once, and expire after a short window.
+          Request a new one, or sign in below if the account is already confirmed.
         </Alert>
       )}
       {notice === "password-updated" && (
