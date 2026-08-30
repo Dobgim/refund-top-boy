@@ -91,9 +91,9 @@ export function SiteFooter() {
         </div>
 
         <p className="pb-10 text-xs leading-relaxed text-ink-400">
-          RoyalRefund manages refund and dispute cases. We are not a bank or a payment institution, we
-          do not hold customer funds at any point, and submitting a case does not guarantee an outcome.
-          Recovered amounts are returned by the paying party to the account they came from.
+          RoyalRefund combines refund and dispute case management with everyday banking: accounts,
+          transfers, savings, deposits and credit. Recovered amounts are credited straight to your
+          RoyalRefund account. Submitting a case does not guarantee an outcome.
         </p>
       </Container>
     </footer>

@@ -17,7 +17,7 @@ export default function TermsPage() {
         {
           heading: "What this service is",
           paragraphs: [
-            "RoyalRefund is a case management service for refund and payment dispute submissions. It organises information and evidence and tracks the state of a review. It is not a bank, a payment institution, a debt collector or a regulated recovery service, and it does not hold or move your funds.",
+            "RoyalRefund provides refund and payment dispute case management alongside account services: balances, transfers, bill payments, savings schemes, fixed deposits and credit. A recovered amount is credited to your RoyalRefund account, from which you can move or withdraw it.",
           ],
         },
         {

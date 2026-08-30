@@ -50,7 +50,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         </div>
 
         <p className="relative mt-10 text-xs text-ink-400">
-          RoyalRefund manages refund and dispute cases. We are not a bank and never hold your funds.
+          RoyalRefund brings refund case management and everyday banking into one account.
         </p>
       </aside>
 

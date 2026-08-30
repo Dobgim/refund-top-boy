@@ -32,8 +32,8 @@ const PRINCIPLES = [
   },
   {
     icon: Compass,
-    title: "Honest about limits",
-    body: "We manage the case, not the money. RoyalRefund is not a bank and never holds your funds; what we control is that your case arrives complete, evidenced and legible.",
+    title: "The case and the money in one place",
+    body: "A recovery is only finished when the money reaches you. Your case and the account it pays into live together, so a settled claim credits your balance without a second system to chase.",
   },
 ];
 

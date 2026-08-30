@@ -7,10 +7,9 @@ import type { ClaimSummary } from "@/lib/queries";
 /**
  * Where a customer sees money that has been returned to them.
  *
- * Styled as a card because that is the mental model, but the wording is
- * deliberately "returned to your account" rather than "balance": RoyalRefund
- * does not hold funds, it records payouts that land in the customer's own bank
- * or wallet.
+ * Lists what each settled case returned. The running balance lives on the
+ * account card at the top of the dashboard; this is the per-case breakdown
+ * behind it.
  */
 export function PayoutWallet({ claims, holder }: { claims: ClaimSummary[]; holder: string }) {
   const settled = claims.filter((claim) => claim.settled_at && claim.settlement_amount);
@@ -110,8 +109,8 @@ export function PayoutWallet({ claims, holder }: { claims: ClaimSummary[]; holde
         )}
 
         <p className="mt-4 border-t border-ink-100 pt-4 text-xs leading-relaxed text-ink-400">
-          These amounts are paid into your own bank account or wallet by the paying party.
-          RoyalRefund does not hold funds on your behalf.
+          Each amount was credited to your RoyalRefund account when the case settled. Move it,
+          spend it or withdraw it from the account card above.
         </p>
       </div>
     </div>

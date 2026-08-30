@@ -31,9 +31,9 @@ const SECURITY_FAQS = [
       "Yes. Contact support from the address on your account and the profile, its cases, documents and messages are removed. Anonymised counts may remain in aggregate statistics.",
   },
   {
-    question: "Do you ever hold my money?",
+    question: "Where does a recovered amount go?",
     answer:
-      "No. RoyalRefund manages the case and the evidence behind it; the money moves between you, the merchant and your bank. We are not a bank or a payment institution, and a recovered amount is returned by the paying party straight to the account it came from.",
+      "Into your RoyalRefund account. Every approved case credits your balance directly, with the amount, the route it took and the rate used all shown on the case. From there you can transfer it, pay a bill with it, save it, or withdraw it to your own bank, mobile money or wallet.",
   },
 ];
 
