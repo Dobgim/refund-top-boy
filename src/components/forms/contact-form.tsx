@@ -84,7 +84,7 @@ export function ContactForm() {
         </div>
 
         <Field label="Subject" htmlFor="subject" error={errors.subject?.message} required>
-          <Input id="subject" placeholder="Question about a case reference" {...register("subject")} />
+          <Input id="subject" {...register("subject")} />
         </Field>
 
         <Field label="Message" htmlFor="message" error={errors.message?.message} required>

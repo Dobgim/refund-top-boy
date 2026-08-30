@@ -92,7 +92,7 @@ export function NewsletterForm({
             inputMode="email"
             autoComplete="email"
             required
-            placeholder="you@example.com"
+            placeholder="Email address"
             aria-invalid={isError || undefined}
             aria-describedby={describedBy}
             className={cn(

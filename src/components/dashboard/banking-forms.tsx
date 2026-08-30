@@ -61,7 +61,6 @@ export function TransferForm({ balance, currency }: { balance: number; currency:
           id="destination"
           value={destination}
           onChange={(event) => setDestination(event.target.value.toUpperCase())}
-          placeholder="RR4000100001"
           className="font-mono tracking-wide"
         />
       </Field>
@@ -80,7 +79,6 @@ export function TransferForm({ balance, currency }: { balance: number; currency:
           inputMode="decimal"
           value={amount}
           onChange={(event) => setAmount(event.target.value)}
-          placeholder="0.00"
         />
       </Field>
 
@@ -89,7 +87,6 @@ export function TransferForm({ balance, currency }: { balance: number; currency:
           id="note"
           value={note}
           onChange={(event) => setNote(event.target.value)}
-          placeholder="What is this for?"
         />
       </Field>
     </MoneyForm>
@@ -130,7 +127,6 @@ export function WithdrawForm({ balance, currency }: { balance: number; currency:
           inputMode="decimal"
           value={amount}
           onChange={(event) => setAmount(event.target.value)}
-          placeholder="0.00"
         />
       </Field>
 
@@ -154,7 +150,6 @@ export function WithdrawForm({ balance, currency }: { balance: number; currency:
           id="wd-destination"
           value={destination}
           onChange={(event) => setDestination(event.target.value)}
-          placeholder="Where should the money go?"
         />
       </Field>
     </MoneyForm>
@@ -214,7 +209,6 @@ export function PayBillForm({ balance, currency }: { balance: number; currency: 
           inputMode="decimal"
           value={amount}
           onChange={(event) => setAmount(event.target.value)}
-          placeholder="0.00"
         />
       </Field>
     </MoneyForm>
@@ -253,7 +247,6 @@ export function SavingsForm({ balance, currency }: { balance: number; currency: 
           inputMode="decimal"
           value={monthly}
           onChange={(event) => setMonthly(event.target.value)}
-          placeholder="0.00"
         />
       </Field>
 
@@ -310,7 +303,6 @@ export function FixedDepositForm({ balance, currency }: { balance: number; curre
           inputMode="decimal"
           value={amount}
           onChange={(event) => setAmount(event.target.value)}
-          placeholder="0.00"
         />
       </Field>
 
@@ -365,7 +357,6 @@ export function LoanForm({ currency }: { currency: string }) {
           inputMode="decimal"
           value={amount}
           onChange={(event) => setAmount(event.target.value)}
-          placeholder="0.00"
         />
       </Field>
 

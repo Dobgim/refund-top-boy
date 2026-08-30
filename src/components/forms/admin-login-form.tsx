@@ -102,7 +102,6 @@ export function AdminLoginForm() {
             type="email"
             inputMode="email"
             autoComplete="email"
-            placeholder="admin@royalrefund.com"
             aria-invalid={Boolean(errors.email)}
             {...register("email")}
           />
@@ -112,7 +111,6 @@ export function AdminLoginForm() {
           <PasswordInput
             id="admin-password"
             autoComplete="current-password"
-            placeholder="Your password"
             aria-invalid={Boolean(errors.password)}
             {...register("password")}
           />

@@ -131,7 +131,6 @@ export function SettlementForm({ claim, disabled }: { claim: ClaimDetail; disabl
             type="number"
             step="any"
             min="0"
-            placeholder="e.g. 67952"
             {...register("conversionRate", { valueAsNumber: true })}
           />
         </Field>

@@ -74,7 +74,6 @@ export function StatusUpdater({
           value={note}
           disabled={disabled || pending}
           onChange={(event) => setNote(event.target.value)}
-          placeholder="Explain what changed and what happens next."
         />
       </Field>
 

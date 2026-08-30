@@ -212,7 +212,6 @@ export function RegisterForm() {
             <Input
               id="fullName"
               autoComplete="name"
-              placeholder="Alex Morgan"
               aria-invalid={Boolean(credentialsForm.formState.errors.fullName)}
               {...credentialsForm.register("fullName")}
             />
@@ -229,7 +228,6 @@ export function RegisterForm() {
               type="email"
               inputMode="email"
               autoComplete="email"
-              placeholder="you@example.com"
               aria-invalid={Boolean(credentialsForm.formState.errors.email)}
               {...credentialsForm.register("email")}
             />
@@ -245,7 +243,6 @@ export function RegisterForm() {
               <PasswordInput
                 id="password"
                 autoComplete="new-password"
-                placeholder="Create a strong password"
                 aria-invalid={Boolean(credentialsForm.formState.errors.password)}
                 {...credentialsForm.register("password")}
               />
@@ -262,7 +259,6 @@ export function RegisterForm() {
             <PasswordInput
               id="confirmPassword"
               autoComplete="new-password"
-              placeholder="Repeat your password"
               aria-invalid={Boolean(credentialsForm.formState.errors.confirmPassword)}
               {...credentialsForm.register("confirmPassword")}
             />
@@ -300,7 +296,6 @@ export function RegisterForm() {
                 id="username"
                 autoComplete="username"
                 spellCheck={false}
-                placeholder="alexmorgan"
                 className="pl-11"
                 aria-invalid={Boolean(profileForm.formState.errors.username)}
                 {...profileForm.register("username")}

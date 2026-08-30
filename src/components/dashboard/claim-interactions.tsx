@@ -42,11 +42,7 @@ export function MessageComposer({ claimId, disabled }: { claimId: string; disabl
         value={body}
         disabled={disabled || pending}
         onChange={(event) => setBody(event.target.value)}
-        placeholder={
-          disabled
-            ? "Messaging is unavailable in this preview."
-            : "Ask a question, or tell your reviewer what you have attached."
-        }
+        placeholder={disabled ? "Messaging is unavailable in this preview." : "Write a message"}
       />
       <div className="mt-3 flex items-center justify-between gap-3">
         <p className="text-xs text-ink-400">Never include a password, PIN or full card number.</p>

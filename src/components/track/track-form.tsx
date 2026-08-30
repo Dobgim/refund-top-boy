@@ -37,7 +37,6 @@ export function TrackForm() {
             id="reference"
             value={value}
             onChange={(event) => setValue(event.target.value.toUpperCase())}
-            placeholder="RR-2019-0118"
             autoComplete="off"
             spellCheck={false}
             aria-invalid={Boolean(error)}

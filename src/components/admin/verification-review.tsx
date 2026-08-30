@@ -140,7 +140,6 @@ export function VerificationReview({
           rows={2}
           value={reason}
           onChange={(event) => setReason(event.target.value)}
-          placeholder="e.g. The back of the card is blurred and the number cannot be read."
         />
       </div>
 

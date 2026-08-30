@@ -261,7 +261,6 @@ export function ClaimForm({
                 step="any"
                 min="0"
                 inputMode="decimal"
-                placeholder="0.00"
                 {...register("amount", { valueAsNumber: true })}
               />
             </Field>
@@ -285,7 +284,7 @@ export function ClaimForm({
             >
               <Input
                 id="transactionReference"
-                placeholder="TXN-0000-0000 or 0xabc123…"
+                
                 className="font-mono text-sm"
                 {...register("transactionReference")}
               />
@@ -306,7 +305,7 @@ export function ClaimForm({
                 </Select>
               </Field>
               <Field label="Reason" htmlFor="reason" error={errors.reason?.message} required hint="A one-line summary.">
-                <Input id="reason" placeholder="Charged twice for a single order" {...register("reason")} />
+                <Input id="reason" {...register("reason")} />
               </Field>
             </div>
 

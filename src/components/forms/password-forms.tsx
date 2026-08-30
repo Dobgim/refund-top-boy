@@ -112,7 +112,6 @@ export function ForgotPasswordForm() {
             type="email"
             inputMode="email"
             autoComplete="email"
-            placeholder="you@example.com"
             aria-invalid={Boolean(errors.email)}
             {...register("email")}
           />
@@ -214,7 +213,6 @@ export function ResetPasswordForm() {
             <PasswordInput
               id="password"
               autoComplete="new-password"
-              placeholder="Create a strong password"
               aria-invalid={Boolean(errors.password)}
               {...register("password")}
             />
@@ -231,7 +229,6 @@ export function ResetPasswordForm() {
           <PasswordInput
             id="confirmPassword"
             autoComplete="new-password"
-            placeholder="Repeat your password"
             aria-invalid={Boolean(errors.confirmPassword)}
             {...register("confirmPassword")}
           />
