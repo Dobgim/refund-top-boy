@@ -131,7 +131,7 @@ export function RegisterForm() {
       return;
     }
 
-    const { error } = await supabase.auth.signUp({
+    const { data: signUpData, error } = await supabase.auth.signUp({
       email: credentials.email,
       password: credentials.password,
       options: {
@@ -158,6 +158,17 @@ export function RegisterForm() {
         return;
       }
       setFormError(error.message);
+      return;
+    }
+
+    // With email confirmation switched off in Supabase, signUp returns a live
+    // session and the account is usable immediately — so go straight to the
+    // welcome screen rather than telling someone to check an inbox that will
+    // never receive anything. With confirmation on, there is no session yet and
+    // the message about the emailed link is correct.
+    if (signUpData.session) {
+      router.push("/welcome");
+      router.refresh();
       return;
     }
 
