@@ -17,7 +17,7 @@ const NAV: NavItem[] = [
   { label: "My Claims", href: "/dashboard/claims", icon: "claims" },
   { label: "Notifications", href: "/dashboard/notifications", icon: "bell" },
   { label: "Start a Claim", href: "/dashboard/claims/new", icon: "newClaim" },
-  { label: "Verification", href: "/dashboard/verify", icon: "verify" },
+  { label: "Verification", href: "/dashboard/verification", icon: "verify" },
   { label: "Settings", href: "/dashboard/settings", icon: "settings" },
   { label: "Track a Case", href: "/track", icon: "track" },
   { label: "Help Center", href: "/faq", icon: "help" },

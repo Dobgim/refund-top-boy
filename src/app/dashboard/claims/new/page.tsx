@@ -18,7 +18,7 @@ export default async function NewClaimPage() {
   // Identity gate: an unverified account is sent to verification rather than
   // shown a form whose submission the database would reject anyway.
   if (isSupabaseConfigured && profile?.verification_status !== "verified") {
-    redirect("/dashboard/verify");
+    redirect("/dashboard/verification");
   }
 
   return (

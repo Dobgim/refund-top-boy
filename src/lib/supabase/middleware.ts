@@ -2,7 +2,9 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { SUPABASE_ANON_KEY, SUPABASE_URL, isSupabaseConfigured } from "./config";
 
-const PROTECTED_PREFIXES = ["/dashboard", "/admin"];
+// /welcome is shown once, straight after a confirmed sign-up, so it belongs
+// behind the session check like the rest of the portal.
+const PROTECTED_PREFIXES = ["/dashboard", "/admin", "/welcome"];
 const AUTH_ROUTES = ["/login", "/register", "/admin-login"];
 
 /** Refreshes the Supabase session cookie and gates protected routes. */

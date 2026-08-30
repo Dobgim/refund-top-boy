@@ -13,8 +13,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { Card, EmptyState, StatusBadge } from "@/components/ui/primitives";
 import { PageHeader, StatCard, StageTracker } from "@/components/dashboard/common";
 import { PayoutWallet } from "@/components/dashboard/payout-wallet";
-import { VERIFICATION_META } from "@/lib/verification";
-import { Alert } from "@/components/ui/primitives";
+import { VerificationBanner } from "@/components/dashboard/verification-banner";
 import { getMyClaims } from "@/lib/queries";
 import { getCurrentProfile } from "@/lib/supabase/server";
 import { CLAIM_TYPE_LABELS } from "@/lib/claims";
@@ -47,22 +46,7 @@ export default async function DashboardOverviewPage() {
         }
       />
 
-      {profile && profile.verification_status !== "verified" && (
-        <Alert
-          tone={profile.verification_status === "rejected" ? "error" : "warning"}
-          title={
-            profile.verification_status === "pending"
-              ? "Your identity document is under review"
-              : "Verify your identity to file a claim"
-          }
-        >
-          {VERIFICATION_META[profile.verification_status].description}{" "}
-          <Link href="/dashboard/verify" className="font-semibold underline">
-            Open verification
-          </Link>
-          .
-        </Alert>
-      )}
+      <VerificationBanner status={profile?.verification_status ?? "unverified"} />
 
       {/* account status */}
       <Card className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">

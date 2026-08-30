@@ -60,6 +60,19 @@
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
+@keyframes confetti-fall {
+  0% {
+    transform: translate3d(0, -10vh, 0) rotate(var(--confetti-rotate, 0deg));
+    opacity: 0;
+  }
+  8% { opacity: 1; }
+  100% {
+    transform: translate3d(var(--confetti-drift, 0px), 105vh, 0)
+      rotate(calc(var(--confetti-rotate, 0deg) + 540deg));
+    opacity: 1;
+  }
+}
+
 @keyframes marquee {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }

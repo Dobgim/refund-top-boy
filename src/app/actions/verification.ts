@@ -66,7 +66,7 @@ export async function submitVerification(raw: unknown) {
   }
 
   revalidatePath("/dashboard");
-  revalidatePath("/dashboard/verify");
+  revalidatePath("/dashboard/verification");
   revalidatePath("/admin/verifications");
   return { ok: true };
 }

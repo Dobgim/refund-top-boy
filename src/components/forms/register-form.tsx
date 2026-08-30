@@ -141,7 +141,7 @@ export function RegisterForm() {
           username: values.username,
           gender: values.gender,
         },
-        emailRedirectTo: `${appOrigin()}/auth/callback?next=/dashboard`,
+        emailRedirectTo: `${appOrigin()}/auth/callback?next=/welcome`,
         ...(captchaToken ? { captchaToken } : {}),
       },
     });
