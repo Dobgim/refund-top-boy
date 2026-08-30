@@ -2,6 +2,8 @@ import { Users } from "lucide-react";
 import { Badge, Card, EmptyState } from "@/components/ui/primitives";
 import { PageHeader } from "@/components/dashboard/common";
 import { getAdminUsers } from "@/lib/queries";
+import { getAdminAccess } from "@/lib/supabase/authz";
+import { DeleteUserButton } from "@/components/admin/delete-user";
 import { formatDate, initialsOf } from "@/lib/utils";
 
 const STATUS_TONE = {
@@ -11,13 +13,21 @@ const STATUS_TONE = {
 } as const;
 
 export default async function AdminUsersPage() {
-  const { data: users } = await getAdminUsers();
+  const [{ data: users }, access] = await Promise.all([getAdminUsers(), getAdminAccess()]);
+
+  // Mirrors the guards in the database function, so the button is disabled for
+  // the cases it would refuse rather than failing after the click.
+  function blockedReason(id: string, role: string): string | undefined {
+    if (id === access.userId) return "You cannot delete your own account";
+    if (role === "admin") return "Demote this administrator before deleting";
+    return undefined;
+  }
 
   return (
     <div className="space-y-6">
       <PageHeader
         title="Users"
-        description="Registered accounts. Profile rows are readable here only because the signed-in account holds the admin role."
+        description="Registered accounts. Deleting one removes it from Supabase along with every claim, document and balance belonging to it."
       />
 
       {users.length === 0 ? (
@@ -44,6 +54,13 @@ export default async function AdminUsersPage() {
                       {user.role === "admin" && <Badge tone="gold">admin</Badge>}
                     </span>
                   </span>
+                  <DeleteUserButton
+                    userId={user.id}
+                    email={user.email}
+                    name={user.full_name}
+                    disabled={Boolean(blockedReason(user.id, user.role))}
+                    disabledReason={blockedReason(user.id, user.role)}
+                  />
                 </Card>
               </li>
             ))}
@@ -60,6 +77,7 @@ export default async function AdminUsersPage() {
                     <th scope="col" className="px-5 py-3.5 font-bold">Role</th>
                     <th scope="col" className="px-5 py-3.5 font-bold">Status</th>
                     <th scope="col" className="px-5 py-3.5 font-bold">Registered</th>
+                    <th scope="col" className="px-5 py-3.5 text-right font-bold">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-ink-100">
@@ -89,6 +107,17 @@ export default async function AdminUsersPage() {
                       </td>
                       <td className="px-5 py-4 whitespace-nowrap text-ink-500">
                         {formatDate(user.created_at)}
+                      </td>
+                      <td className="px-5 py-4 text-right">
+                        <div className="flex justify-end">
+                          <DeleteUserButton
+                            userId={user.id}
+                            email={user.email}
+                            name={user.full_name}
+                            disabled={Boolean(blockedReason(user.id, user.role))}
+                            disabledReason={blockedReason(user.id, user.role)}
+                          />
+                        </div>
                       </td>
                     </tr>
                   ))}
