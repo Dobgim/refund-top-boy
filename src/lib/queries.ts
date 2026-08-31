@@ -446,6 +446,7 @@ export async function getAdminUsers(): Promise<DataResult<Profile[]>> {
       verification_status: index === 4 ? "pending" : "verified",
       username: name.toLowerCase().replace(/[^a-z]/g, "").slice(0, 12),
       gender: null,
+      phone: null,
       avatar_url: null,
       created_at: new Date(now.getTime() - index * 86_400_000 * 9).toISOString(),
       updated_at: now.toISOString(),

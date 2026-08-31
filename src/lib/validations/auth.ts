@@ -38,6 +38,17 @@ export const registerProfileSchema = z.object({
     message: "Choose an option",
   }),
   country: z.string().trim().min(2, "Select your country"),
+  phone: z
+    .string()
+    .trim()
+    .min(1, "Enter your phone number")
+    // Digits only once the country code and any trunk zero are stripped.
+    .refine((value) => value.replace(/[^\d]/g, "").replace(/^0+/, "").length >= 6, {
+      message: "That number looks too short",
+    })
+    .refine((value) => value.replace(/[^\d]/g, "").length <= 15, {
+      message: "That number looks too long",
+    }),
   acceptTerms: z.literal(true, { message: "You must accept the terms to continue" }),
 });
 

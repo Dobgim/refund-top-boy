@@ -23,6 +23,7 @@ export default async function ProfileSettingsPage() {
     ["Full name", profile?.full_name || "—"],
     ["Username", profile?.username ? `@${profile.username}` : "Not set"],
     ["Email", profile?.email || "—"],
+    ["Phone", profile?.phone || "Not set"],
     ["Gender", profile?.gender ? GENDER_LABELS[profile.gender as Gender] : "Not set"],
     ["Country", profile?.country || "—"],
     ["Member since", profile?.created_at ? formatDate(profile.created_at) : "—"],

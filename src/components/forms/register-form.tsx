@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, ArrowRight, AtSign, Check, Loader2, UserPlus } from "lucide-react";
+import { ArrowLeft, ArrowRight, AtSign, Check, Loader2, Phone, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox, Field, FieldError, Input, Select } from "@/components/ui/field";
 import { Alert } from "@/components/ui/primitives";
@@ -22,6 +22,7 @@ import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { COUNTRIES } from "@/lib/data/countries";
 import { GENDERS, GENDER_LABELS } from "@/lib/verification";
+import { dialCodeFor, toE164 } from "@/lib/dial-codes";
 import { appOrigin } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -96,9 +97,15 @@ export function RegisterForm() {
       username: "",
       gender: undefined as unknown as RegisterProfile["gender"],
       country: "",
+      phone: "",
       acceptTerms: false as unknown as true,
     },
   });
+
+  // The dialling code is derived from the country chosen just above, so the two
+  // can never disagree and the visitor never has to know their own code.
+  const chosenCountry = profileForm.watch("country");
+  const dialCode = dialCodeFor(chosenCountry);
 
   async function onSignUp(values: RegisterProfile) {
     setFormError(null);
@@ -140,6 +147,8 @@ export function RegisterForm() {
           country: values.country,
           username: values.username,
           gender: values.gender,
+          // Stored in E.164 so it is callable from anywhere.
+          phone: toE164(values.country, values.phone),
         },
         emailRedirectTo: `${appOrigin()}/auth/callback?next=/welcome`,
         ...(captchaToken ? { captchaToken } : {}),
@@ -344,6 +353,43 @@ export function RegisterForm() {
                 </option>
               ))}
             </Select>
+          </Field>
+
+          <Field
+            label="Phone number"
+            htmlFor="phone"
+            error={profileForm.formState.errors.phone?.message}
+            hint={
+              chosenCountry
+                ? dialCode
+                  ? `${chosenCountry} numbers start ${dialCode}. Enter the rest of your number.`
+                  : "Enter your full number including the country code."
+                : "Choose your country first and the code is filled in for you."
+            }
+            required
+          >
+            <div className="flex">
+              <span
+                className={cn(
+                  "inline-flex h-12 shrink-0 items-center gap-1.5 rounded-l-xl border border-r-0 border-ink-200 bg-ink-50 px-3.5 font-mono text-sm font-semibold",
+                  dialCode ? "text-ink-900" : "text-ink-400",
+                )}
+              >
+                <Phone aria-hidden className="size-3.5 text-ink-400" />
+                {dialCode ?? "+"}
+              </span>
+              <Input
+                id="phone"
+                type="tel"
+                inputMode="tel"
+                autoComplete="tel-national"
+                disabled={!chosenCountry}
+                aria-invalid={Boolean(profileForm.formState.errors.phone)}
+                aria-describedby="phone-hint"
+                className="rounded-l-none"
+                {...profileForm.register("phone")}
+              />
+            </div>
           </Field>
 
           <div>

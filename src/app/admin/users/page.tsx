@@ -94,6 +94,7 @@ export default async function AdminUsersPage() {
                             </span>
                             <span className="block max-w-[16rem] truncate text-xs text-ink-400">
                               {user.email}
+                              {user.phone ? ` · ${user.phone}` : ""}
                             </span>
                           </span>
                         </div>

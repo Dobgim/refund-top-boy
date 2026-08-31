@@ -28,6 +28,7 @@ export interface Profile {
   username: string | null;
   gender: "female" | "male" | "non_binary" | "prefer_not_to_say" | null;
   email: string;
+  phone: string | null;
   country: string | null;
   role: UserRole;
   account_status: AccountStatus;
