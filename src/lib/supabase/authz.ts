@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cache } from "react";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -25,7 +26,7 @@ export interface AdminAccess {
  * Falls back to reading the profile directly if the RPC is missing, and always
  * reports the underlying error rather than swallowing it.
  */
-export async function getAdminAccess(): Promise<AdminAccess> {
+export const getAdminAccess = cache(async (): Promise<AdminAccess> => {
   const empty: AdminAccess = {
     supabase: null,
     userId: null,
@@ -117,4 +118,4 @@ export async function getAdminAccess(): Promise<AdminAccess> {
     isAdmin: role === "admin",
     reason: role === "admin" ? null : `This account has the role "${role}", not "admin".`,
   };
-}
+});

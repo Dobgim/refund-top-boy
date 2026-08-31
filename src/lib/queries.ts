@@ -1,6 +1,6 @@
 import "server-only";
 
-import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { getSupabaseServerClient, getSessionUser } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { DEMO_CLAIMS, findDemoClaim, type DemoClaim } from "@/lib/data/demo";
 import type { SettlementMethod } from "@/lib/claims";
@@ -149,9 +149,7 @@ export async function getMyClaims(): Promise<DataResult<ClaimSummary[]>> {
   const supabase = await getSupabaseServerClient();
   if (!supabase) return { data: DEMO_CLAIMS.map(demoToSummary), demo: true };
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getSessionUser();
   if (!user) return { data: [], demo: false };
 
   // RLS restricts this to the caller's own rows; the filter is belt and braces.
@@ -555,9 +553,7 @@ export async function getMyNotifications(limit = 30): Promise<DataResult<Notific
   const supabase = await getSupabaseServerClient();
   if (!supabase) return { data: [], demo: true };
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getSessionUser();
   if (!user) return { data: [], demo: false };
 
   const { data } = await supabase
@@ -577,9 +573,7 @@ export async function getUnreadNotificationCount(): Promise<number> {
   const supabase = await getSupabaseServerClient();
   if (!supabase) return 0;
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getSessionUser();
   if (!user) return 0;
 
   const { count } = await supabase
@@ -613,9 +607,7 @@ export async function getMyVerification(): Promise<VerificationRow | null> {
   const supabase = await getSupabaseServerClient();
   if (!supabase) return null;
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getSessionUser();
   if (!user) return null;
 
   const { data } = await supabase
@@ -670,9 +662,7 @@ export async function getMyAccount(): Promise<BankAccount | null> {
   const supabase = await getSupabaseServerClient();
   if (!supabase) return null;
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getSessionUser();
   if (!user) return null;
 
   const { data } = await supabase

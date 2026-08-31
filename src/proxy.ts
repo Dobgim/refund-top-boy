@@ -10,8 +10,22 @@ export function proxy(request: NextRequest) {
   return updateSession(request);
 }
 
+/**
+ * Only the routes that actually need a session.
+ *
+ * This previously matched every request, so each marketing page — all of them
+ * static — waited on a network round trip to the Supabase auth server before a
+ * byte was sent. That was most of the delay between pages. Static pages now
+ * come straight from the edge cache, and the session check runs only where it
+ * decides something.
+ */
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|images|icons|.*\.(?:svg|png|jpg|jpeg|gif|webp|ico|txt|xml)$).*)",
+    "/dashboard/:path*",
+    "/admin/:path*",
+    "/welcome",
+    "/login",
+    "/register",
+    "/admin-login",
   ],
 };
