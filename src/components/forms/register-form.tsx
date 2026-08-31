@@ -24,6 +24,7 @@ import { COUNTRIES } from "@/lib/data/countries";
 import { GENDERS, GENDER_LABELS } from "@/lib/verification";
 import { dialCodeFor, toE164 } from "@/lib/dial-codes";
 import { appOrigin } from "@/lib/site";
+import { describeAuthError } from "@/lib/auth-errors";
 import { cn } from "@/lib/utils";
 
 const STEPS = ["Your details", "About you"] as const;
@@ -157,8 +158,9 @@ export function RegisterForm() {
 
     if (error) {
       const message = error.message.toLowerCase();
+
       if (message.includes("already registered")) {
-        setFormError("An account already exists for that email address.");
+        setFormError(describeAuthError(error.message));
         setStep(0);
         return;
       }
@@ -166,7 +168,7 @@ export function RegisterForm() {
         profileForm.setError("username", { message: "That username is already taken" });
         return;
       }
-      setFormError(error.message);
+      setFormError(describeAuthError(error.message));
       return;
     }
 

@@ -11,6 +11,7 @@ import { Alert } from "@/components/ui/primitives";
 import { PasswordInput, PasswordStrength } from "@/components/forms/shared";
 import { passwordSchema } from "@/lib/validations/auth";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
+import { describeAuthError } from "@/lib/auth-errors";
 
 const schema = z
   .object({
@@ -75,7 +76,7 @@ export function ChangePasswordForm({ email }: { email: string }) {
 
     const { error } = await supabase.auth.updateUser({ password: values.password });
     if (error) {
-      setFeedback({ tone: "error", message: error.message });
+      setFeedback({ tone: "error", message: describeAuthError(error.message) });
       return;
     }
 

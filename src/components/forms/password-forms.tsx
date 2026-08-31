@@ -21,6 +21,7 @@ import {
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { appOrigin } from "@/lib/site";
+import { describeAuthError } from "@/lib/auth-errors";
 
 export function ForgotPasswordForm() {
   const [sent, setSent] = useState(false);
@@ -55,9 +56,18 @@ export function ForgotPasswordForm() {
       ...(captchaToken ? { captchaToken } : {}),
     });
 
-    // Deliberately generic: the response must not reveal whether an account exists.
+    // A missing account is deliberately not reported: the response must not
+    // reveal which addresses are registered. A rate limit is reported, because
+    // it is about the request rather than the account, and it is actionable.
     if (error && !error.message.toLowerCase().includes("user not found")) {
-      setFormError("We could not start the reset. Please try again in a moment.");
+      const lower = error.message.toLowerCase();
+      const isRateLimit =
+        lower.includes("rate limit") || lower.includes("after") || lower.includes("too many");
+      setFormError(
+        isRateLimit
+          ? describeAuthError(error.message)
+          : "We could not start the reset. Please try again in a moment.",
+      );
       return;
     }
     setSent(true);
@@ -178,7 +188,7 @@ export function ResetPasswordForm() {
 
     const { error } = await supabase.auth.updateUser({ password: values.password });
     if (error) {
-      setFormError(error.message);
+      setFormError(describeAuthError(error.message));
       return;
     }
 

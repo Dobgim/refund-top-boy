@@ -15,6 +15,7 @@ import { isTurnstileEnabled } from "@/lib/turnstile";
 import { loginSchema, type LoginValues } from "@/lib/validations/auth";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { describeAuthError } from "@/lib/auth-errors";
 
 export function LoginForm() {
   const router = useRouter();
@@ -52,11 +53,7 @@ export function LoginForm() {
     });
 
     if (error) {
-      setFormError(
-        error.message.toLowerCase().includes("invalid")
-          ? "That email and password combination does not match an account."
-          : error.message,
-      );
+      setFormError(describeAuthError(error.message));
       return;
     }
 
