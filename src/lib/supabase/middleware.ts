@@ -4,7 +4,10 @@ import { SUPABASE_ANON_KEY, SUPABASE_URL, isSupabaseConfigured } from "./config"
 
 // /welcome is shown once, straight after a confirmed sign-up, so it belongs
 // behind the session check like the rest of the portal.
-const PROTECTED_PREFIXES = ["/dashboard", "/admin", "/welcome"];
+// /welcome is deliberately absent: a sign-up awaiting email confirmation has
+// no session yet, and the page gates itself on the sign-up having just
+// happened rather than on a session.
+const PROTECTED_PREFIXES = ["/dashboard", "/admin"];
 const AUTH_ROUTES = ["/login", "/register", "/admin-login"];
 
 /** Refreshes the Supabase session cookie and gates protected routes. */

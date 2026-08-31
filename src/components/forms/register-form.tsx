@@ -183,7 +183,10 @@ export function RegisterForm() {
       return;
     }
 
-    router.push("/login?notice=registered");
+    // Confirmation is on, so there is no session yet. Still show the welcome
+    // screen — the account genuinely was created — and let it explain the
+    // emailed link instead of dropping the person on a sign-in form.
+    router.push("/welcome?pending=1");
   }
 
   return (
