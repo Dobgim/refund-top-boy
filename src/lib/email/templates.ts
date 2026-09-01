@@ -258,3 +258,50 @@ export function newClaimAdminEmail(claim: {
     }),
   };
 }
+
+
+/* --------------------------------------------------- customer service inbox */
+
+export function supportEnquiryAdminEmail(enquiry: {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  signedIn: boolean;
+}) {
+  return {
+    subject: `Support: ${enquiry.subject}`,
+    html: shell({
+      heading: "New message from customer service",
+      intro: `${esc(enquiry.name)} has written in through the contact form. Reply to this email and it goes straight back to them.`,
+      rows: [
+        ["From", enquiry.name],
+        ["Email", enquiry.email],
+        ["Account", enquiry.signedIn ? "Signed in" : "Not signed in"],
+        ["Subject", enquiry.subject],
+      ],
+      callout: { label: "Message", body: enquiry.message, tone: "info" },
+      cta: { label: "Open the support inbox", href: `${SITE.url}/admin/support` },
+    }),
+  };
+}
+
+export function supportEnquiryAckEmail(enquiry: { name: string; subject: string }) {
+  const firstName = enquiry.name.trim().split(/\s+/)[0] || "there";
+
+  return {
+    subject: `We have your message — ${enquiry.subject}`,
+    html: shell({
+      heading: `Thanks ${firstName}, we have your message.`,
+      intro:
+        "A member of the team will read it and reply to this address. You do not need to send it again.",
+      rows: [["Subject", enquiry.subject]],
+      callout: {
+        label: "A reminder",
+        body: "We will never ask you for a banking password, card PIN, one-time code or recovery phrase — not by email, not on a call.",
+        tone: "warn",
+      },
+      footerNote: "If your question is about a specific case, quoting its reference helps us answer faster.",
+    }),
+  };
+}

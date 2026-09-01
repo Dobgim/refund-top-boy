@@ -17,7 +17,8 @@ const NAV: NavItem[] = [
   { label: "Verifications", href: "/admin/verifications", icon: "verify" },
   { label: "Users", href: "/admin/users", icon: "users" },
   { label: "Documents", href: "/admin/documents", icon: "documents" },
-  { label: "Messages", href: "/admin/messages", icon: "messages" },
+  { label: "Customer service", href: "/admin/support", icon: "support" },
+  { label: "Case messages", href: "/admin/messages", icon: "messages" },
   { label: "Settings", href: "/admin/settings", icon: "settings" },
 ];
 

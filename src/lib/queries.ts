@@ -708,3 +708,35 @@ export async function getMyBankingRecords<T>(
 
   return (data as T[]) ?? [];
 }
+
+/* ------------------------------------------------------ support enquiries */
+
+export interface SupportEnquiry {
+  id: string;
+  user_id: string | null;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  status: "new" | "in_progress" | "resolved";
+  handled_at: string | null;
+  created_at: string;
+}
+
+/** The customer-service inbox. RLS restricts this to reviewers. */
+export async function getSupportEnquiries(): Promise<DataResult<SupportEnquiry[]>> {
+  const supabase = await getSupabaseServerClient();
+  if (!supabase) return { data: [], demo: true };
+
+  const { data, error } = await supabase
+    .from("support_enquiries")
+    .select("id, user_id, name, email, subject, message, status, handled_at, created_at")
+    .order("created_at", { ascending: false })
+    .limit(200);
+
+  // A missing table means migration 12 has not been run; treat as empty rather
+  // than breaking the admin area.
+  if (error) return { data: [], demo: false };
+
+  return { data: (data as unknown as SupportEnquiry[]) ?? [], demo: false };
+}

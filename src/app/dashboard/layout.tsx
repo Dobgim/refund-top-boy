@@ -28,6 +28,7 @@ const NAV: NavItem[] = [
   { label: "Transactions", href: "/dashboard/transactions", icon: "transactions" },
   { label: "Track a Case", href: "/track", icon: "track" },
   { label: "Help Center", href: "/faq", icon: "help" },
+  { label: "Contact Support", href: "/contact", icon: "support" },
 ];
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {

@@ -49,6 +49,7 @@ export const NAV_ICONS = {
   documents: FileStack,
   messages: MessagesSquare,
   bell: Bell,
+  support: LifeBuoy,
   verify: BadgeCheck,
   transfer: Send,
   withdraw: Banknote,
