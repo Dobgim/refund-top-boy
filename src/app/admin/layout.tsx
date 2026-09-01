@@ -42,7 +42,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       items={NAV}
       areaLabel="Administration"
       name={profile?.full_name ?? "Case Administrator"}
-      email={profile?.email ?? "admin@royalrefund.com"}
+      email={profile?.email ?? "admin@getroyalrefund.com"}
       role={access.role ?? profile?.role ?? "user"}
     >
       {children}

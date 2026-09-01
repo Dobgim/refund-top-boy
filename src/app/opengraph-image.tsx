@@ -32,12 +32,16 @@ export default function OpenGraphImage() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: 34,
-              fontWeight: 800,
-              color: "#f2c866",
             }}
           >
-            R
+            <svg width="44" height="44" viewBox="0 0 48 48">
+              <path d="M24 9.5 38.5 20H9.5z" fill="#ffffff" />
+              <rect x="11" y="21.4" width="26" height="2.6" rx="1.1" fill="#ffffff" />
+              <rect x="15" y="25.4" width="4" height="8.4" rx="0.9" fill="#ffffff" />
+              <rect x="22" y="25.4" width="4" height="8.4" rx="0.9" fill="#ffffff" />
+              <rect x="29" y="25.4" width="4" height="8.4" rx="0.9" fill="#ffffff" />
+              <rect x="10" y="35.2" width="28" height="3.4" rx="1.4" fill="#f2c866" />
+            </svg>
           </div>
           <div style={{ display: "flex", fontSize: 34, fontWeight: 800, letterSpacing: -1 }}>
             <span>Royal</span>

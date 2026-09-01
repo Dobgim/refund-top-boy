@@ -21,7 +21,7 @@ const PALETTE = [
 
 const RULES = {
   do: [
-    "Keep clear space around the mark equal to the height of its crown.",
+    "Keep clear space around the mark equal to the height of its plinth.",
     "Use the full lockup at 24px height or larger; below that use the mark alone.",
     "Place the light wordmark only on Ink 800 or darker.",
     "Pair Royal 600 with white text; pair Gold 400 with Ink 950 text.",
@@ -40,7 +40,7 @@ export default function BrandPage() {
       <PageHero
         eyebrow="Brand"
         title="RoyalRefund brand guidelines"
-        description="The identity is built on two ideas: protection and return. A shield whose counter-form is a return arrow, topped by three crown notches for the royal cue."
+        description="A classical bank facade: pediment, three columns and a gold plinth. It is the one piece of iconography read as a bank almost everywhere, which is what the mark has to say at 16px in a browser tab."
       />
 
       <Section>

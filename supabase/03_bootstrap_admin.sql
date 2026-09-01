@@ -14,7 +14,7 @@
 --      "Database error querying schema".
 -- ============================================================================
 
-\set admin_email 'admin@royalrefund.com'
+\set admin_email 'admin@getroyalrefund.com'
 \set admin_password 'change-me-before-running'
 
 -- 1. the auth user -----------------------------------------------------------

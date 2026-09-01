@@ -48,7 +48,7 @@ export const SITE = {
   description:
     "RoyalRefund is a secure platform for submitting refund and payment dispute cases, uploading supporting evidence and following every stage of the review from one portal.",
   url: resolveSiteUrl(),
-  supportEmail: "support@royalrefund.example",
+  supportEmail: "support@getroyalrefund.com",
   locale: "en_US",
 } as const;
 
