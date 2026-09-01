@@ -9,6 +9,13 @@ import {
 } from "@/lib/validations/claim";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { getAdminAccess } from "@/lib/supabase/authz";
+import { EMAIL_ADMIN, sendEmail } from "@/lib/email/client";
+import {
+  claimDecisionEmail,
+  claimReceivedEmail,
+  newClaimAdminEmail,
+  payoutRecordedEmail,
+} from "@/lib/email/templates";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { CLAIM_STATUSES } from "@/lib/claims";
 import type { ClaimStatus } from "@/types";
@@ -92,10 +99,39 @@ export async function createClaim(raw: unknown): Promise<CreateClaimResult> {
     return { ok: false, message: "We could not save the case. Please try again." };
   }
 
+  const reference = data.reference as string;
+
+  // Both emails are best effort: the case is already saved, and a bounced
+  // receipt must not report the submission as failed.
+  const receipt = claimReceivedEmail({
+    reference,
+    claim_type: values.claimType,
+    amount: values.amount,
+    currency: values.currency,
+    reason: values.reason,
+    contact_name: values.contactName,
+  });
+  await sendEmail({ to: values.contactEmail, ...receipt });
+
+  const alert = newClaimAdminEmail({
+    reference,
+    claim_type: values.claimType,
+    amount: values.amount,
+    currency: values.currency,
+    reason: values.reason,
+    description: values.description,
+    contact_name: values.contactName,
+    contact_email: values.contactEmail,
+    country: values.country,
+    // Evidence uploads happen after this returns, so the count is not final.
+    documentCount: 0,
+  });
+  await sendEmail({ to: EMAIL_ADMIN, ...alert, replyTo: values.contactEmail });
+
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/claims");
 
-  return { ok: true, claimId: data.id as string, reference: data.reference as string };
+  return { ok: true, claimId: data.id as string, reference };
 }
 
 /** Posts a message from the case owner onto their own case. */
@@ -168,6 +204,28 @@ export async function updateClaimStatus(claimId: string, status: string, note: s
     target_id: claimId,
     detail: { status, note: note.trim() || null },
   });
+
+  // Tell the customer directly, not just in-app: approve, reject and every
+  // other move sends an email from the business address.
+  const { data: owner } = await supabase
+    .from("claims")
+    .select("reference, contact_name, contact_email")
+    .eq("id", claimId)
+    .maybeSingle();
+
+  const target = owner as
+    | { reference: string; contact_name: string; contact_email: string }
+    | null;
+
+  if (target?.contact_email) {
+    const message = claimDecisionEmail({
+      reference: target.reference,
+      status: status as ClaimStatus,
+      contact_name: target.contact_name,
+      note: note.trim() || null,
+    });
+    await sendEmail({ to: target.contact_email, ...message });
+  }
 
   revalidatePath("/admin");
   revalidatePath("/admin/claims");
@@ -333,6 +391,29 @@ export async function recordSettlement(claimId: string, raw: unknown) {
     body: `${v.note || "The payout has been recorded against your case."}${conversionLine}`,
     claim_id: claimId,
   });
+
+  const { data: payee } = await supabase
+    .from("claims")
+    .select("contact_name, contact_email")
+    .eq("id", claimId)
+    .maybeSingle();
+
+  const recipient = payee as { contact_name: string; contact_email: string } | null;
+
+  if (recipient?.contact_email) {
+    const message = payoutRecordedEmail({
+      reference: claim.reference,
+      contact_name: recipient.contact_name,
+      approvedAmount: v.approvedAmount,
+      claimCurrency: claim.currency,
+      settlementAmount,
+      settlementCurrency: payoutCurrency,
+      rate: rate ?? null,
+      method: v.method.replace(/_/g, " "),
+      note: v.note || null,
+    });
+    await sendEmail({ to: recipient.contact_email, ...message });
+  }
 
   revalidatePath("/admin/claims");
   revalidatePath("/dashboard");
