@@ -118,7 +118,7 @@ npm run dev                    # http://localhost:3000
 | --- | --- | --- |
 | `NEXT_PUBLIC_SUPABASE_URL` | client + server | Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | client + server | Anon key; every request it makes is still bound by RLS |
-| `NEXT_PUBLIC_SITE_URL` | client + server | Canonical URL for SEO and auth redirects |
+| `NEXT_PUBLIC_SITE_URL` | client + server | Canonical URL for SEO and for the links inside auth emails. Set it to the live domain everywhere, including locally |
 | `SUPABASE_SERVICE_ROLE_KEY` | **server only** | Bypasses RLS. Used exclusively by `npm run seed` |
 | `DEMO_ADMIN_EMAIL` | **server only** | Seed script: demo administrator address |
 | `DEMO_ADMIN_PASSWORD` | **server only** | Seed script: minimum 12 characters |
@@ -135,8 +135,14 @@ No credential is hard-coded anywhere in the source. `.env.local` is git-ignored.
 2. Copy the URL and anon key from **Project Settings → API** into `.env.local`.
 3. Open the **SQL Editor** and run **`supabase/01_schema.sql`**, then
    **`supabase/02_policies.sql`**. Both are idempotent — re-running is safe.
-4. Under **Authentication → URL Configuration**, set the Site URL to your
-   `NEXT_PUBLIC_SITE_URL` and add `<site-url>/auth/callback` as a redirect URL.
+4. Under **Authentication → URL Configuration**:
+   - **Site URL** → `https://www.getroyalrefund.com` (the live site, not localhost).
+   - **Redirect URLs** → add `https://www.getroyalrefund.com/auth/callback`.
+
+   Both matter. Supabase discards any `redirectTo` that is not on the Redirect
+   URLs list and substitutes the Site URL instead, so a Site URL still left at
+   `http://localhost:3000` sends every confirmation and reset link there — a
+   dead address on the phone the mail is usually read on.
 5. Run `npm run seed` to create the demo accounts.
 
 `02_policies.sql` also creates the private `claim-documents` storage bucket with an
@@ -294,9 +300,9 @@ fixtures so the interface can be reviewed, with writes disabled and a banner say
    - `NEXT_PUBLIC_SITE_URL` — your production URL, e.g. `https://royalrefund.vercel.app`
    - `SUPABASE_SERVICE_ROLE_KEY` — only if you intend to run the seed from CI
 4. Deploy.
-5. Back in Supabase, add `https://<your-domain>/auth/callback` to the allowed redirect
-   URLs and set the Site URL to your production domain, or confirmation and
-   password-reset links will bounce.
+5. Back in Supabase, set **Authentication → URL Configuration → Site URL** to your
+   production domain and add `https://<your-domain>/auth/callback` to the allowed
+   redirect URLs, or confirmation and password-reset links will bounce.
 
 ---
 

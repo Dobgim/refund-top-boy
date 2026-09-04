@@ -53,15 +53,40 @@ export const SITE = {
 } as const;
 
 /**
+ * True when an explicit canonical URL was configured for this deployment.
+ *
+ * Only NEXT_PUBLIC_* variables are inlined into the client bundle, so this is
+ * the same answer in the browser as it is on the server.
+ */
+function hasConfiguredSiteUrl(): boolean {
+  return Boolean(
+    process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
+      process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL?.trim(),
+  );
+}
+
+/**
  * The origin to build auth redirect links from.
  *
- * In the browser this is always the real origin the user is on, which keeps
- * confirmation and password-reset links correct on production, on preview
- * deployments, and on localhost without any configuration. Only NEXT_PUBLIC_*
- * variables reach client bundles, so relying on SITE.url alone would silently
- * send production users to localhost.
+ * Confirmation and password-reset links are opened later, from a mail client,
+ * on whatever device the person happens to read their mail on. So the link has
+ * to point at the live site, not at whichever origin the browser was on when
+ * the form was submitted — signing up from a local dev server or a preview
+ * deployment otherwise mails out a `http://localhost:3000/...` link that only
+ * resolves on the machine that created it.
+ *
+ * The configured canonical URL therefore wins whenever one is set. Only when
+ * nothing is configured do we fall back to the current origin, which keeps a
+ * bare `npm run dev` with no `.env.local` working.
+ *
+ * Supabase must also allow the resulting URL: Authentication -> URL
+ * Configuration -> Redirect URLs needs `<site-url>/auth/callback` (or
+ * `<site-url>/**`). An address that is not on that list is discarded and the
+ * project's Site URL is substituted instead, which is the other way these
+ * links end up pointing at localhost.
  */
 export function appOrigin(): string {
+  if (hasConfiguredSiteUrl()) return SITE.url;
   if (typeof window !== "undefined") return window.location.origin;
   return SITE.url;
 }
