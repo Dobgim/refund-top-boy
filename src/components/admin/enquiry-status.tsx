@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Check, CircleDot, Loader2, RotateCcw } from "lucide-react";
-import { setEnquiryStatus } from "@/app/actions/support";
+import { Check, CircleDot, Loader2, RotateCcw, Trash2 } from "lucide-react";
+import { deleteEnquiry, setEnquiryStatus } from "@/app/actions/support";
 import { cn } from "@/lib/utils";
 
 type Status = "new" | "in_progress" | "resolved";
@@ -33,6 +33,9 @@ export function EnquiryStatusControls({ id, current }: { id: string; current: St
   const router = useRouter();
   const [pending, setPending] = useState<Status | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // Deleting is irreversible, so the button asks once before it will do it.
+  const [confirming, setConfirming] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   async function move(to: Status) {
     setPending(to);
@@ -46,6 +49,26 @@ export function EnquiryStatusControls({ id, current }: { id: string; current: St
     router.refresh();
   }
 
+  async function remove() {
+    if (!confirming) {
+      setConfirming(true);
+      return;
+    }
+    setDeleting(true);
+    setError(null);
+    const result = await deleteEnquiry(id);
+    if (!result.ok) {
+      setDeleting(false);
+      setConfirming(false);
+      setError(result.message ?? "That message could not be deleted.");
+      return;
+    }
+    // Left spinning on purpose: the row is about to disappear with the refresh.
+    router.refresh();
+  }
+
+  const busy = pending !== null || deleting;
+
   return (
     <div>
       <div className="flex flex-wrap gap-2">
@@ -55,7 +78,7 @@ export function EnquiryStatusControls({ id, current }: { id: string; current: St
             <button
               key={action.to}
               type="button"
-              disabled={pending !== null}
+              disabled={busy}
               onClick={() => move(action.to)}
               className={cn(
                 "inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-bold transition-colors disabled:opacity-50",
@@ -71,6 +94,27 @@ export function EnquiryStatusControls({ id, current }: { id: string; current: St
             </button>
           );
         })}
+
+        <button
+          type="button"
+          disabled={busy}
+          onClick={remove}
+          onBlur={() => setConfirming(false)}
+          aria-label={confirming ? "Confirm deleting this message" : "Delete this message"}
+          className={cn(
+            "inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-bold transition-colors disabled:opacity-50",
+            confirming
+              ? "border-rose-300 bg-rose-100 text-rose-900 hover:bg-rose-200"
+              : "border-ink-200 bg-white text-ink-500 hover:bg-rose-50 hover:text-rose-700",
+          )}
+        >
+          {deleting ? (
+            <Loader2 aria-hidden className="size-3.5 animate-spin" />
+          ) : (
+            <Trash2 aria-hidden className="size-3.5" />
+          )}
+          {confirming ? "Delete for good?" : "Delete"}
+        </button>
       </div>
       {error && (
         <p role="alert" className="mt-2 text-xs font-medium text-rose-600">

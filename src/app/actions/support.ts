@@ -110,3 +110,26 @@ export async function setEnquiryStatus(
   revalidatePath("/admin/support");
   return { ok: true };
 }
+
+/**
+ * Removes an enquiry outright. Reviewers only, and there is no undo: the row is
+ * gone from the inbox for everyone. The emailed copy in the support mailbox is
+ * unaffected, so nothing a customer sent is ever lost by clearing the page.
+ */
+export async function deleteEnquiry(enquiryId: string) {
+  const { supabase, userId, isAdmin, reason } = await getAdminAccess();
+  if (!supabase || !userId) return { ok: false, message: reason ?? "Unavailable." };
+  if (!isAdmin) return { ok: false, message: reason ?? "You are not a reviewer." };
+
+  const { error } = await supabase.from("support_enquiries").delete().eq("id", enquiryId);
+
+  if (error) {
+    return {
+      ok: false,
+      message: `Could not delete: ${error.message}. If this mentions a policy, run supabase/13_enquiry_delete.sql.`,
+    };
+  }
+
+  revalidatePath("/admin/support");
+  return { ok: true };
+}
