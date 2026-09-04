@@ -15,6 +15,8 @@ const NAV: NavItem[] = [
   { label: "Dashboard", href: "/admin", icon: "gauge", exact: true },
   { label: "Claims", href: "/admin/claims", icon: "claims" },
   { label: "Verifications", href: "/admin/verifications", icon: "verify" },
+  { label: "Withdrawals", href: "/admin/withdrawals", icon: "withdraw" },
+  { label: "Loan applications", href: "/admin/loans", icon: "loan" },
   { label: "Users", href: "/admin/users", icon: "users" },
   { label: "Documents", href: "/admin/documents", icon: "documents" },
   { label: "Customer service", href: "/admin/support", icon: "support" },

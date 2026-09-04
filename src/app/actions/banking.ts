@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { getAdminAccess } from "@/lib/supabase/authz";
+import { ADMIN_RECIPIENTS, sendEmail } from "@/lib/email/client";
+import { loanAppliedAdminEmail, withdrawalRequestedAdminEmail } from "@/lib/email/templates";
 
 const money = z
   .number({ message: "Enter an amount" })
@@ -44,6 +46,41 @@ async function callMoneyFunction(fn: string, args: Record<string, unknown>) {
   return { ok: true };
 }
 
+/**
+ * Who is signed in, for the notices below.
+ *
+ * The money functions take no notice of the caller's name, so it is read back
+ * from the profile afterwards rather than threaded through the RPC.
+ */
+async function currentCustomer() {
+  const supabase = await getSupabaseServerClient();
+  if (!supabase) return null;
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const [{ data: profile }, { data: account }] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("full_name, email")
+      .eq("id", user.id)
+      .maybeSingle<{ full_name: string | null; email: string | null }>(),
+    supabase
+      .from("bank_accounts")
+      .select("currency")
+      .eq("user_id", user.id)
+      .maybeSingle<{ currency: string | null }>(),
+  ]);
+
+  return {
+    fullName: profile?.full_name ?? "A customer",
+    email: profile?.email ?? user.email ?? "Unknown address",
+    currency: account?.currency ?? "USD",
+  };
+}
+
 export async function transferFunds(raw: unknown) {
   const parsed = z
     .object({
@@ -77,11 +114,28 @@ export async function requestWithdrawal(raw: unknown) {
     return { ok: false, message: parsed.error.issues[0]?.message ?? "Check the form." };
   }
 
-  return callMoneyFunction("request_withdrawal", {
+  const result = await callMoneyFunction("request_withdrawal", {
     withdraw_amount: parsed.data.amount,
     withdraw_method: parsed.data.method,
     withdraw_destination: parsed.data.destination,
   });
+
+  // Only a request that actually went through is worth telling anyone about.
+  if (result.ok) {
+    const customer = await currentCustomer();
+    if (customer) {
+      const notice = withdrawalRequestedAdminEmail({
+        ...customer,
+        amount: parsed.data.amount,
+        method: parsed.data.method,
+        destination: parsed.data.destination,
+      });
+      await sendEmail({ to: ADMIN_RECIPIENTS, ...notice });
+    }
+    revalidatePath("/admin/withdrawals");
+  }
+
+  return result;
 }
 
 export async function payBill(raw: unknown) {
@@ -165,6 +219,17 @@ export async function applyForLoan(raw: unknown) {
   });
 
   if (error) return { ok: false, message: `The application could not be saved: ${error.message}` };
+
+  const customer = await currentCustomer();
+  if (customer) {
+    const notice = loanAppliedAdminEmail({
+      ...customer,
+      amount: parsed.data.amount,
+      purpose: parsed.data.purpose,
+      months: parsed.data.months,
+    });
+    await sendEmail({ to: ADMIN_RECIPIENTS, ...notice });
+  }
 
   revalidatePath("/dashboard/loans");
   revalidatePath("/admin/loans");

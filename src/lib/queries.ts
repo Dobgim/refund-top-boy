@@ -740,3 +740,87 @@ export async function getSupportEnquiries(): Promise<DataResult<SupportEnquiry[]
 
   return { data: (data as unknown as SupportEnquiry[]) ?? [], demo: false };
 }
+
+/* --------------------------------------------- withdrawals and loan requests */
+
+export type RequestStatus = "pending" | "approved" | "completed" | "rejected";
+
+export interface AdminWithdrawalRow {
+  id: string;
+  amount: number;
+  method: string;
+  destination: string;
+  status: RequestStatus;
+  note: string | null;
+  created_at: string;
+  customer: string;
+  email: string;
+}
+
+export interface AdminLoanRow {
+  id: string;
+  amount: number;
+  purpose: string;
+  tenure_months: number;
+  rate_percent: number;
+  status: RequestStatus;
+  decision_note: string | null;
+  created_at: string;
+  customer: string;
+  email: string;
+}
+
+/** Joined profile, flattened. Both request tables carry the same shape. */
+type WithProfile = { profiles: { full_name: string | null; email: string | null } | null };
+
+function withCustomer<T extends WithProfile>(rows: T[] | null) {
+  return (rows ?? []).map(({ profiles, ...row }) => ({
+    ...row,
+    customer: profiles?.full_name ?? "Unknown customer",
+    email: profiles?.email ?? "—",
+  }));
+}
+
+/** Every withdrawal request, newest first. RLS restricts this to reviewers. */
+export async function getAdminWithdrawals(): Promise<DataResult<AdminWithdrawalRow[]>> {
+  const supabase = await getSupabaseServerClient();
+  if (!supabase) return { data: [], demo: true };
+
+  const { data, error } = await supabase
+    .from("withdrawal_requests")
+    .select(
+      "id, amount, method, destination, status, note, created_at, profiles!withdrawal_requests_user_id_fkey ( full_name, email )",
+    )
+    .order("created_at", { ascending: false })
+    .limit(200);
+
+  // A missing table means the banking migration has not been run. Treat it as
+  // an empty inbox rather than breaking the console.
+  if (error) return { data: [], demo: false };
+
+  return {
+    data: withCustomer(data as unknown as Array<AdminWithdrawalRow & WithProfile>),
+    demo: false,
+  };
+}
+
+/** Every loan application, newest first. RLS restricts this to reviewers. */
+export async function getAdminLoans(): Promise<DataResult<AdminLoanRow[]>> {
+  const supabase = await getSupabaseServerClient();
+  if (!supabase) return { data: [], demo: true };
+
+  const { data, error } = await supabase
+    .from("loans")
+    .select(
+      "id, amount, purpose, tenure_months, rate_percent, status, decision_note, created_at, profiles!loans_user_id_fkey ( full_name, email )",
+    )
+    .order("created_at", { ascending: false })
+    .limit(200);
+
+  if (error) return { data: [], demo: false };
+
+  return {
+    data: withCustomer(data as unknown as Array<AdminLoanRow & WithProfile>),
+    demo: false,
+  };
+}

@@ -6,7 +6,7 @@ import { contactSchema } from "@/lib/validations/claim";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { getAdminAccess } from "@/lib/supabase/authz";
 import { verifyTurnstileToken } from "@/lib/turnstile";
-import { EMAIL_ADMIN, sendEmail } from "@/lib/email/client";
+import { ADMIN_RECIPIENTS, sendEmail } from "@/lib/email/client";
 import { supportEnquiryAckEmail, supportEnquiryAdminEmail } from "@/lib/email/templates";
 
 export interface SupportResult {
@@ -78,7 +78,7 @@ export async function submitSupportEnquiry(
     message: values.message,
     signedIn: Boolean(user),
   });
-  await sendEmail({ to: EMAIL_ADMIN, ...toTeam, replyTo: values.email });
+  await sendEmail({ to: ADMIN_RECIPIENTS, ...toTeam, replyTo: values.email });
 
   const toSender = supportEnquiryAckEmail({ name: values.name, subject: values.subject });
   await sendEmail({ to: values.email, ...toSender });

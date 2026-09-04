@@ -16,8 +16,28 @@ const API_URL = "https://api.resend.com/emails";
 /** `RoyalRefund <support@getroyalrefund.com>` */
 export const EMAIL_FROM = process.env.EMAIL_FROM ?? "RoyalRefund <support@getroyalrefund.com>";
 
-/** Where new-claim notifications land. */
-export const EMAIL_ADMIN = process.env.EMAIL_ADMIN ?? "support@getroyalrefund.com";
+/** Where new-claim notifications land. The first address is the canonical one. */
+export const EMAIL_ADMIN = (process.env.EMAIL_ADMIN ?? "support@getroyalrefund.com")
+  .split(",")[0]
+  .trim();
+
+/**
+ * Every address that should receive an operational notice.
+ *
+ * EMAIL_ADMIN accepts a comma-separated list, so the business address and a
+ * personal inbox can both be copied without standing up forwarding rules:
+ *
+ *   EMAIL_ADMIN=support@getroyalrefund.com,someone@gmail.com
+ *
+ * Resend rejects the whole request if any recipient is malformed, so blank
+ * entries left by a trailing comma are dropped rather than sent.
+ */
+export const ADMIN_RECIPIENTS: string[] = (
+  process.env.EMAIL_ADMIN ?? "support@getroyalrefund.com"
+)
+  .split(",")
+  .map((address) => address.trim())
+  .filter(Boolean);
 
 /** Replies from customers should reach a human, not the no-reply sender. */
 export const EMAIL_REPLY_TO = process.env.EMAIL_REPLY_TO ?? "support@getroyalrefund.com";

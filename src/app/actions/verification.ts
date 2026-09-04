@@ -4,7 +4,9 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { getAdminAccess } from "@/lib/supabase/authz";
-import { ID_DOCUMENT_TYPES, type IdDocumentType } from "@/lib/verification";
+import { ID_DOCUMENT_LABELS, ID_DOCUMENT_TYPES, type IdDocumentType } from "@/lib/verification";
+import { ADMIN_RECIPIENTS, sendEmail } from "@/lib/email/client";
+import { verificationSubmittedAdminEmail } from "@/lib/email/templates";
 
 const submitSchema = z.object({
   documentType: z.enum(ID_DOCUMENT_TYPES as unknown as [IdDocumentType, ...IdDocumentType[]]),
@@ -64,6 +66,24 @@ export async function submitVerification(raw: unknown) {
   if (error) {
     return { ok: false, message: `Your document could not be submitted: ${error.message}` };
   }
+
+  // Tell the reviewers a document is waiting. Best-effort, and after the row is
+  // safely written: a bounced notification must never lose the submission.
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("full_name, email")
+    .eq("id", user.id)
+    .maybeSingle<{ full_name: string | null; email: string | null }>();
+
+  const notice = verificationSubmittedAdminEmail({
+    fullName: v.fullName,
+    email: profile?.email ?? user.email ?? "Unknown address",
+    documentType: ID_DOCUMENT_LABELS[v.documentType],
+    documentLabel: v.documentLabel || null,
+    documentNumber: v.documentNumber || null,
+    hasBack: Boolean(v.backPath),
+  });
+  await sendEmail({ to: ADMIN_RECIPIENTS, ...notice });
 
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/verification");

@@ -305,3 +305,119 @@ export function supportEnquiryAckEmail(enquiry: { name: string; subject: string 
     }),
   };
 }
+
+/* ------------------------------------- everything else a customer submits */
+
+/**
+ * Identity document submitted for review.
+ *
+ * The document images are deliberately not attached and not linked directly:
+ * they live in a private bucket, and the only way to see one is to sign in to
+ * the console, so a forwarded or intercepted email never exposes an ID.
+ */
+export function verificationSubmittedAdminEmail(submission: {
+  fullName: string;
+  email: string;
+  documentType: string;
+  documentLabel: string | null;
+  documentNumber: string | null;
+  hasBack: boolean;
+}) {
+  return {
+    subject: `Identity document submitted — ${submission.fullName}`,
+    html: shell({
+      heading: "An identity document is waiting for review",
+      intro: `${esc(submission.fullName)} has uploaded a document for verification.`,
+      rows: [
+        ["Name on document", submission.fullName],
+        ["Account", submission.email],
+        ["Document", submission.documentLabel || submission.documentType],
+        ["Reference number", submission.documentNumber ?? "Not given"],
+        ["Images", submission.hasBack ? "Front and back" : "Front only"],
+      ],
+      cta: { label: "Review the document", href: `${SITE.url}/admin/verifications` },
+      footerNote:
+        "The images are held in a private bucket and are not attached to this email. Open the console to view them.",
+    }),
+  };
+}
+
+/** Withdrawal request. The funds are already held, so this needs a decision. */
+export function withdrawalRequestedAdminEmail(request: {
+  fullName: string;
+  email: string;
+  amount: number;
+  currency: string;
+  method: string;
+  destination: string;
+}) {
+  return {
+    subject: `Withdrawal requested — ${formatCurrency(request.amount, request.currency)} by ${request.fullName}`,
+    html: shell({
+      heading: "A withdrawal is waiting for a decision",
+      intro: `${esc(request.fullName)} has asked to withdraw funds. The amount is already held against the balance, so approving or rejecting it settles the hold.`,
+      rows: [
+        ["Customer", request.fullName],
+        ["Account", request.email],
+        ["Amount", formatCurrency(request.amount, request.currency)],
+        ["Method", request.method],
+        ["Destination", request.destination],
+      ],
+      callout: {
+        label: "Funds are on hold",
+        body: "Rejecting the request returns the money to the customer's balance automatically.",
+        tone: "warn",
+      },
+      cta: { label: "Review withdrawals", href: `${SITE.url}/admin/withdrawals` },
+    }),
+  };
+}
+
+/** Loan application. Nothing is disbursed until a reviewer approves. */
+export function loanAppliedAdminEmail(application: {
+  fullName: string;
+  email: string;
+  amount: number;
+  currency: string;
+  purpose: string;
+  months: number;
+}) {
+  return {
+    subject: `Loan application — ${formatCurrency(application.amount, application.currency)} by ${application.fullName}`,
+    html: shell({
+      heading: "A loan application has been submitted",
+      intro: `${esc(application.fullName)} has applied for a loan. Nothing is disbursed until it is approved.`,
+      rows: [
+        ["Customer", application.fullName],
+        ["Account", application.email],
+        ["Amount", formatCurrency(application.amount, application.currency)],
+        ["Term", `${application.months} months`],
+      ],
+      callout: { label: "Purpose given", body: application.purpose, tone: "info" },
+      cta: { label: "Review applications", href: `${SITE.url}/admin/loans` },
+    }),
+  };
+}
+
+/** A customer replied on their own case thread. */
+export function claimMessageAdminEmail(message: {
+  reference: string;
+  fullName: string;
+  email: string;
+  body: string;
+}) {
+  return {
+    subject: `Reply on ${message.reference} — ${message.fullName}`,
+    html: shell({
+      heading: `New reply on case ${message.reference}`,
+      intro: `${esc(message.fullName)} has written on their case thread. Answer in the console so the reply stays on the case.`,
+      rows: [
+        ["Case", message.reference],
+        ["From", message.fullName],
+        ["Account", message.email],
+      ],
+      callout: { label: "Message", body: message.body, tone: "info" },
+      cta: { label: "Open the case", href: `${SITE.url}/admin/claims/${message.reference}` },
+    }),
+  };
+}

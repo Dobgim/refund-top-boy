@@ -9,9 +9,10 @@ import {
 } from "@/lib/validations/claim";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { getAdminAccess } from "@/lib/supabase/authz";
-import { EMAIL_ADMIN, sendEmail } from "@/lib/email/client";
+import { ADMIN_RECIPIENTS, sendEmail } from "@/lib/email/client";
 import {
   claimDecisionEmail,
+  claimMessageAdminEmail,
   claimReceivedEmail,
   newClaimAdminEmail,
   payoutRecordedEmail,
@@ -126,7 +127,7 @@ export async function createClaim(raw: unknown): Promise<CreateClaimResult> {
     // Evidence uploads happen after this returns, so the count is not final.
     documentCount: 0,
   });
-  await sendEmail({ to: EMAIL_ADMIN, ...alert, replyTo: values.contactEmail });
+  await sendEmail({ to: ADMIN_RECIPIENTS, ...alert, replyTo: values.contactEmail });
 
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/claims");
@@ -164,6 +165,28 @@ export async function postClaimMessage(claimId: string, body: string) {
   });
 
   if (error) return { ok: false, message: "The message could not be sent." };
+
+  // A reviewer writing to a customer already reaches them through the case
+  // thread and the notification trigger. It is the other direction that had no
+  // route out of the database, so only a customer's message is emailed on.
+  if ((profile?.role ?? "user") !== "admin") {
+    const { data: claim } = await supabase
+      .from("claims")
+      .select("reference, contact_name, contact_email")
+      .eq("id", claimId)
+      .maybeSingle<{ reference: string; contact_name: string; contact_email: string }>();
+
+    if (claim) {
+      const notice = claimMessageAdminEmail({
+        reference: claim.reference,
+        fullName: claim.contact_name,
+        email: claim.contact_email,
+        body: parsed.data.body,
+      });
+      // Reply-to is the customer, so answering the email reaches them directly.
+      await sendEmail({ to: ADMIN_RECIPIENTS, ...notice, replyTo: claim.contact_email });
+    }
+  }
 
   revalidatePath("/dashboard/claims");
   revalidatePath("/admin/claims");
